@@ -4,6 +4,7 @@ import cn.hutool.core.collection.CollUtil;
 import com.jxau.train.member.domain.Member;
 import com.jxau.train.member.domain.MemberExample;
 import com.jxau.train.member.mapper.MemberMapper;
+import com.jxau.train.member.req.MemberRegisterReq;
 import com.jxau.train.member.service.MemberService;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
@@ -21,8 +22,8 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public long register(String mobile) {
-
+    public long register(MemberRegisterReq req) {
+        String mobile = req.getMobile();
         //增加判断数据库是否已经存在电话号码
         MemberExample memberExample = new MemberExample();
         memberExample.createCriteria().andMobileEqualTo(mobile);

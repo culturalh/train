@@ -1,5 +1,7 @@
 package com.jxau.train.member.controller;
 
+import com.jxau.train.common.resp.CommonResp;
+import com.jxau.train.member.req.MemberRegisterReq;
 import com.jxau.train.member.service.MemberService;
 import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,13 +17,20 @@ public class MemberController {
     private MemberService memberService;
 
     @GetMapping("/count")
-    public int count()
+    public CommonResp<Integer> count()
     {
-        return memberService.count();
+        int count = memberService.count();
+        CommonResp<Integer> commonResp = new CommonResp<>();
+        commonResp.setContent(count);
+        return commonResp;
     }
     @PostMapping("/register")
-    public long register(String mobile)
+    public CommonResp<Long> register(MemberRegisterReq req)
     {
-        return memberService.register(mobile);
+        long register = memberService.register(req);
+//        CommonResp<Long> commonResp = new CommonResp<>();
+//        commonResp.setContent(register);
+        return new CommonResp<>(register);
+
     }
 }

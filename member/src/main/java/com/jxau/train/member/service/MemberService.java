@@ -1,6 +1,7 @@
 package com.jxau.train.member.service;
 
 
+import com.jxau.train.member.req.MemberRegisterReq;
 
 public interface MemberService {
 
@@ -8,6 +9,6 @@ public interface MemberService {
 
 
     //注册
-    long register(String mobile);
+    long register(MemberRegisterReq req);
 
 }
