@@ -1,6 +1,8 @@
 package com.jxau.train.member.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
+import com.jxau.train.common.exception.BusinessException;
+import com.jxau.train.common.exception.BusinessExceptionEnum;
 import com.jxau.train.member.domain.Member;
 import com.jxau.train.member.domain.MemberExample;
 import com.jxau.train.member.mapper.MemberMapper;
@@ -29,10 +31,11 @@ public class MemberServiceImpl implements MemberService {
         memberExample.createCriteria().andMobileEqualTo(mobile);
         List<Member> list = memberMapper.selectByExample(memberExample);
         if(CollUtil.isNotEmpty(list)){
-            throw new RuntimeException("该手机号已经注册过了");
+            throw new BusinessException(BusinessExceptionEnum.MEMBER_MOBILE_EXIST);
         }
         Member member = new Member();
-        member.setId(System.currentTimeMillis());
+//        member.setId(System.currentTimeMillis());
+        member.setId(1L);
         member.setMobile(mobile);
         memberMapper.insert(member);
         return member.getId();
