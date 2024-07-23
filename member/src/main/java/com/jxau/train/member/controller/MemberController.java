@@ -1,7 +1,10 @@
 package com.jxau.train.member.controller;
 
 import com.jxau.train.common.resp.CommonResp;
+import com.jxau.train.member.req.MemberLoginReq;
 import com.jxau.train.member.req.MemberRegisterReq;
+import com.jxau.train.member.req.MemberSendCodeReq;
+import com.jxau.train.member.resp.MemberLoginResp;
 import com.jxau.train.member.service.MemberService;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
@@ -29,9 +32,19 @@ public class MemberController {
     public CommonResp<Long> register(@Valid MemberRegisterReq req)
     {
         long register = memberService.register(req);
-//        CommonResp<Long> commonResp = new CommonResp<>();
-//        commonResp.setContent(register);
         return new CommonResp<>(register);
+    }
+    @PostMapping("/sendCode")
+    public CommonResp<Long> sendCode(@Valid MemberSendCodeReq req)
+    {
+        memberService.sendCode(req);
+        return new CommonResp<>();
+    }
+    @PostMapping("/login")
+    public CommonResp<MemberLoginResp> sendCode(@Valid MemberLoginReq req)
+    {
+        MemberLoginResp resp = memberService.login(req);
 
+        return new CommonResp<>(resp);
     }
 }
