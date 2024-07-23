@@ -3,6 +3,7 @@ package com.jxau.train.member.service.impl;
 import cn.hutool.core.collection.CollUtil;
 import com.jxau.train.common.exception.BusinessException;
 import com.jxau.train.common.exception.BusinessExceptionEnum;
+import com.jxau.train.common.util.SnowUtil;
 import com.jxau.train.member.domain.Member;
 import com.jxau.train.member.domain.MemberExample;
 import com.jxau.train.member.mapper.MemberMapper;
@@ -35,7 +36,8 @@ public class MemberServiceImpl implements MemberService {
         }
         Member member = new Member();
 //        member.setId(System.currentTimeMillis());
-        member.setId(1L);
+//        member.setId(1L);
+        member.setId(SnowUtil.getSnowFlakeId());
         member.setMobile(mobile);
         memberMapper.insert(member);
         return member.getId();
