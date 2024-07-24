@@ -4,7 +4,6 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.RandomUtil;
-import cn.hutool.jwt.JWTUtil;
 import com.jxau.train.common.exception.BusinessException;
 import com.jxau.train.common.exception.BusinessExceptionEnum;
 import com.jxau.train.common.util.JwtUtil;
