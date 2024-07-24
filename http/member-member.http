@@ -3,9 +3,8 @@ Content-Type: application/json
 
 {
   "mobile": "12389009091",
-  "code": "1234"
+  "code": "8888"
 }
-
 ###
 POST http://localhost:8000/member/member/sendCode
 Content-Type: application/json
