@@ -68,24 +68,24 @@ export default defineComponent({
       });
     };
 
-    // const login = () => {
-    //   axios.post("/member/member/login", loginForm).then((response) => {
-    //     let data = response.data;
-    //     if (data.success) {
-    //       notification.success({ description: '登录成功！' });
-    //       // 登录成功，跳到控台主页
-    //       router.push("/welcome");
-    //       store.commit("setMember", data.content);
-    //     } else {
-    //       notification.error({ description: data.message });
-    //     }
-    //   })
-    // };
+    const login = () => {
+      axios.post("http://localhost:8000/member/member/login", loginForm).then((response) => {
+        let data = response.data;
+        if (data.success) {
+          notification.success({ description: '登录成功！' });
+          // 登录成功，跳到控台主页
+          // router.push("/welcome");
+          // store.commit("setMember", data.content);
+        } else {
+          notification.error({ description: data.message });
+        }
+      })
+    };
 
     return {
       loginForm,
-      sendCode
-      // login
+      sendCode,
+      login
     };
   },
 });
