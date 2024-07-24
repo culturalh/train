@@ -8,6 +8,7 @@ Content-Type: application/json
 ###
 POST http://localhost:8000/member/member/sendCode
 Content-Type: application/json
+token:eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJuYmYiOjE3MjE4MTk0ODUsIm1vYmlsZSI6IjEyMzg5MDA5MDkxIiwiaWQiOjE4MTU3NDE1Mjk5NTY5NDU5MjAsImV4cCI6MTcyMTkwNTg4NSwiaWF0IjoxNzIxODE5NDg1fQ.lV20V2arZTtTRPxVfJBIvON9UlzISGy1GYrJt_jdIBI
 
 {
   "mobile": "12389009091"
@@ -27,5 +28,5 @@ mobile=12389009098
 ###
 GET http://localhost:8000/member/member/count
 Accept: application/json
-token:123
+token:eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJuYmYiOjE3MjE4MTk0ODUsIm1vYmlsZSI6IjEyMzg5MDA5MDkxIiwiaWQiOjE4MTU3NDE1Mjk5NTY5NDU5MjAsImV4cCI6MTcyMTkwNTg4NSwiaWF0IjoxNzIxODE5NDg1fQ.lV20V2arZTtTRPxVfJBIvON9UlzISGy1GYrJt_jdIBI
 

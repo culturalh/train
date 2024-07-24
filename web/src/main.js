@@ -2,7 +2,7 @@ import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'
 import store from './store'
-import Antd from 'ant-design-vue';
+import Antd, {notification} from 'ant-design-vue';
 import 'ant-design-vue/dist/antd.css'
 import * as Icons from '@ant-design/icons-vue'
 import axios from "axios";
@@ -19,6 +19,11 @@ for (const i in icons) {
  * axios拦截器
  */
 axios.interceptors.request.use(config => {
+    const _token = store.state.member.token;
+    if (_token) {
+        config.headers.token = _token;
+        console.log("请求头headers增加token：",_token);
+    }
     //成功之后的处理
     // 获取token
     console.log("请求参数：",config);
@@ -31,6 +36,13 @@ axios.interceptors.response.use(res => {
     console.log("响应参数：",res);
     return res;
 },error => {
+    const  response = error.response;
+    if(response.status === 401){
+        console.log("未登录或者登录超时")
+        store.commit("setMember",{});
+        notification.error({description:"未登录或者登录超时"})
+        router.push("/login");
+    }
     return Promise.reject(error);
 })
 axios.defaults.baseURL = process.env.VUE_APP_SERVER;
