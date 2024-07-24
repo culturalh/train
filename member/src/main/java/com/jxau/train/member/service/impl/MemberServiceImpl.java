@@ -96,6 +96,7 @@ public class MemberServiceImpl implements MemberService {
         return memberLoginResp;
     }
 
+    //根据mobile查询
     private Member selectByMobile(String mobile) {
         MemberExample memberExample = new MemberExample();
         memberExample.createCriteria().andMobileEqualTo(mobile);
