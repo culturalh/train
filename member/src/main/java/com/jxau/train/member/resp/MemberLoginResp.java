@@ -7,7 +7,6 @@ public class MemberLoginResp {
     private String mobile;
 
 
-
     public Long getId() {
         return id;
     }

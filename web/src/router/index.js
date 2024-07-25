@@ -15,7 +15,42 @@ const routes = [
     component: () => import('../views/main.vue'),
     meta:{
       loginRequire:true
-    }
+    },
+    children:[
+      {
+        path:'welcome',
+        name:'welcome-view',
+        component: () => import('../views/main/welcome.vue')
+      },
+      {
+        path:'passenger',
+        component: () => import('../views/main/passenger.vue')
+      },
+      // {
+      //   path: 'ticket',
+      //   component: () => import('../views/main/ticket.vue')
+      // },
+      // {
+      //   path: 'order',
+      //   component: () => import('../views/main/order.vue')
+      // },
+      // {
+      //   path: 'my-ticket',
+      //   component: () => import('../views/main/my-ticket.vue')
+      // },
+      // {
+      //   path: 'seat',
+      //   component: () => import('../views/main/seat.vue')
+      // },
+      // {
+      //   path: 'admin',
+      //   component: () => import('../views/main/admin.vue')
+      // }
+    ]
+  },
+  {
+    path: '',
+    redirect: '/welcome'
   }
 ]
 
@@ -49,18 +84,3 @@ router.beforeEach((to, from, next) => {
 })
 
 export default router
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
