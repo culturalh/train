@@ -1,6 +1,7 @@
 package com.jxau.train.member.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import com.jxau.train.common.context.LoginMemberContext;
 import com.jxau.train.common.util.SnowUtil;
 import com.jxau.train.member.domain.Passenger;
 import com.jxau.train.member.mapper.PassengerMapper;
@@ -21,7 +22,10 @@ public class PassengerServiceImpl implements PassengerService {
     public void save(PassengerSaveReq req) {
         Date now = new Date();
         Passenger passenger = BeanUtil.copyProperties(req, Passenger.class);
+        //使用雪花算法生成ID
         passenger.setId(SnowUtil.getSnowFlakeId());
+        //从上下文本地变量中获取登录用户会员ID
+        passenger.setMemberId(LoginMemberContext.getId());
         passenger.setCreateTime(now);
         passenger.setUpdateTime(now);
         passengerMapper.insert(passenger);
