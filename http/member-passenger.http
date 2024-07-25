@@ -8,8 +8,10 @@ Content-Type: application/json
 token: {{token}}
 
 {
-  "name": "zhangsan1",
-  "idCard": "1234567892",
-  "type": "1"
+  "id":1816446392453959680,
+  "memberId":1815730042693619712,
+  "name": "zhangsan8",
+  "idCard": "123321",
+  "type": "2"
 }
 

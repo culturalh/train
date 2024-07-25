@@ -108,7 +108,7 @@ export default defineComponent({
     };
 
     const onEdit = (record) => {
-      passenger.value = window.Tool.copy(record);
+      // passenger.value = window.Tool.copy(record);
       visible.value = true;
     };
 
@@ -197,7 +197,7 @@ export default defineComponent({
       loading,
       onAdd,
       handleOk,
-      // onEdit,
+      onEdit,
       // onDelete
     };
   },

@@ -34,13 +34,18 @@ public class PassengerServiceImpl implements PassengerService {
     public void save(PassengerSaveReq req) {
         Date now = new Date();
         Passenger passenger = BeanUtil.copyProperties(req, Passenger.class);
-        //使用雪花算法生成ID
-        passenger.setId(SnowUtil.getSnowFlakeId());
-        //从上下文本地变量中获取登录用户会员ID
-        passenger.setMemberId(LoginMemberContext.getId());
-        passenger.setCreateTime(now);
-        passenger.setUpdateTime(now);
-        passengerMapper.insert(passenger);
+        if(ObjectUtil.isNull(req.getId())){
+            //使用雪花算法生成ID
+            passenger.setId(SnowUtil.getSnowFlakeId());
+            //从上下文本地变量中获取登录用户会员ID
+            passenger.setMemberId(LoginMemberContext.getId());
+            passenger.setCreateTime(now);
+            passenger.setUpdateTime(now);
+            passengerMapper.insert(passenger);
+        }else {
+            passenger.setUpdateTime(now);
+            passengerMapper.updateByPrimaryKey(passenger);
+        }
     }
 
     @Override
