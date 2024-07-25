@@ -42,9 +42,12 @@
       </a-form-item>
       <a-form-item label="旅客类型" v-model:value="passenger.type">
         <a-select v-model:value="passenger.type">
-          <a-select-option v-for="item in PASSENGER_TYPE_ARRAY" :key="item.code" :value="item.code">
-            {{item.desc}}
-          </a-select-option>
+<!--          <a-select-option v-for="item in PASSENGER_TYPE_ARRAY" :key="item.code" :value="item.code">-->
+<!--            {{item.desc}}-->
+<!--          </a-select-option>-->
+          <a-select-option value="1">成人</a-select-option>
+          <a-select-option value="2">学生</a-select-option>
+          <a-select-option value="3">儿童</a-select-option>
         </a-select>
       </a-form-item>
     </a-form>
@@ -60,7 +63,6 @@ export default defineComponent({
   name: "passenger-view",
   setup() {
     const PASSENGER_TYPE_ARRAY = window.PASSENGER_TYPE_ARRAY;
-    // const PASSENGER_TYPE_ARRAY = "学生";
     const visible = ref(false);
     let passenger = ref({
       id: undefined,
@@ -108,7 +110,9 @@ export default defineComponent({
     };
 
     const onEdit = (record) => {
-      // passenger.value = window.Tool.copy(record);
+      passenger.value = window.Tool.copy(record);
+
+      // passenger.value = record;
       visible.value = true;
     };
 
