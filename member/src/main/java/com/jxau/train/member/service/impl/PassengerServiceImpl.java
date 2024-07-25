@@ -2,6 +2,7 @@ package com.jxau.train.member.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.ObjectUtil;
+import com.github.pagehelper.PageHelper;
 import com.jxau.train.common.context.LoginMemberContext;
 import com.jxau.train.common.util.SnowUtil;
 import com.jxau.train.member.domain.Passenger;
@@ -44,6 +45,7 @@ public class PassengerServiceImpl implements PassengerService {
         if(ObjectUtil.isNotNull(req.getMemberId())){
             criteria.andMemberIdEqualTo(req.getMemberId());
         }
+        PageHelper.startPage(2,2);
         List<Passenger> passengerList = passengerMapper.selectByExample(passengerExample);
         List<PassengerQueryResp> passengerQueryResp = BeanUtil.copyToList(passengerList, PassengerQueryResp.class);
         return passengerQueryResp;

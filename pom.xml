@@ -76,6 +76,11 @@
                 <artifactId>mysql-connector-java</artifactId>
                 <version>8.0.22</version>
             </dependency>
+            <dependency>
+                <groupId>com.github.pagehelper</groupId>
+                <artifactId>PageHelper-spring-boot-Starter</artifactId>
+                <version>1.4.6</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 </project>
