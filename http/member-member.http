@@ -5,6 +5,14 @@ Content-Type: application/json
   "mobile": "12389009091",
   "code": "8888"
 }
+
+> {%
+  client.log(Json.stringify(response))
+  client.log(response.body.data.token)
+  client.global.set("token", response.body.data.token)
+%}
+
+
 ###
 POST http://localhost:8000/member/member/sendCode
 Content-Type: application/json
