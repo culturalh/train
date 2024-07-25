@@ -40,7 +40,7 @@
       <a-form-item label="身份证">
         <a-input v-model:value="passenger.idCard" />
       </a-form-item>
-      <a-form-item label="旅客类型">
+      <a-form-item label="旅客类型" v-model:value="passenger.type">
         <a-select v-model:value="passenger.type">
           <a-select-option v-for="item in PASSENGER_TYPE_ARRAY" :key="item.code" :value="item.code">
             {{item.desc}}
@@ -60,6 +60,7 @@ export default defineComponent({
   name: "passenger-view",
   setup() {
     const PASSENGER_TYPE_ARRAY = window.PASSENGER_TYPE_ARRAY;
+    // const PASSENGER_TYPE_ARRAY = "学生";
     const visible = ref(false);
     let passenger = ref({
       id: undefined,
@@ -75,7 +76,8 @@ export default defineComponent({
     const pagination = ref({
       total: 0,
       current: 1,
-      pageSize: 10,
+      pageSize: 2,
+      // pageSize: 10,
     });
     let loading = ref(false);
     const columns = [
@@ -105,10 +107,10 @@ export default defineComponent({
       visible.value = true;
     };
 
-    // const onEdit = (record) => {
-    //   passenger.value = window.Tool.copy(record);
-    //   visible.value = true;
-    // };
+    const onEdit = (record) => {
+      passenger.value = window.Tool.copy(record);
+      visible.value = true;
+    };
 
     // const onDelete = (record) => {
     //   axios.delete("/member/passenger/delete/" + record.id).then((response) => {
@@ -125,63 +127,63 @@ export default defineComponent({
     //   });
     // };
 
-    // const handleOk = () => {
-    //   axios.post("/member/passenger/save", passenger.value).then((response) => {
-    //     let data = response.data;
-    //     if (data.success) {
-    //       notification.success({description: "保存成功！"});
-    //       visible.value = false;
-    //       handleQuery({
-    //         page: pagination.value.current,
-    //         size: pagination.value.pageSize
-    //       });
-    //     } else {
-    //       notification.error({description: data.message});
-    //     }
-    //   });
-    // };
+    const handleOk = () => {
+      axios.post("/member/passenger/save", passenger.value).then((response) => {
+        let data = response.data;
+        if (data.success) {
+          notification.success({description: "保存成功！"});
+          visible.value = false;
+          handleQuery({
+            page: pagination.value.current,
+            size: pagination.value.pageSize
+          });
+        } else {
+          notification.error({description: data.message});
+        }
+      });
+    };
 
-    // const handleQuery = (param) => {
-    //   if (!param) {
-    //     param = {
-    //       page: 1,
-    //       size: pagination.value.pageSize
-    //     };
-    //   }
-    //   loading.value = true;
-    //   axios.get("/member/passenger/query-list", {
-    //     params: {
-    //       page: param.page,
-    //       size: param.size
-    //     }
-    //   }).then((response) => {
-    //     loading.value = false;
-    //     let data = response.data;
-    //     if (data.success) {
-    //       passengers.value = data.content.list;
-    //       // 设置分页控件的值
-    //       pagination.value.current = param.page;
-    //       pagination.value.total = data.content.total;
-    //     } else {
-    //       notification.error({description: data.message});
-    //     }
-    //   });
-    // };
+    const handleQuery = (param) => {
+      if (!param) {
+        param = {
+          page: 1,
+          size: pagination.value.pageSize
+        };
+      }
+      loading.value = true;
+      axios.get("/member/passenger/query-list", {
+        params: {
+          page: param.page,
+          size: param.size
+        }
+      }).then((response) => {
+        loading.value = false;
+        let data = response.data;
+        if (data.success) {
+          passengers.value = data.content.list;
+          // 设置分页控件的值
+          pagination.value.current = param.page;
+          pagination.value.total = data.content.total;
+        } else {
+          notification.error({description: data.message});
+        }
+      });
+    };
 
-    // const handleTableChange = (pagination) => {
-    //   // console.log("看看自带的分页参数都有啥：" + pagination);
-    //   handleQuery({
-    //     page: pagination.current,
-    //     size: pagination.pageSize
-    //   });
-    // };
+    const handleTableChange = (pagination) => {
+      // console.log("看看自带的分页参数都有啥：" + pagination);
+      handleQuery({
+        page: pagination.current,
+        size: pagination.pageSize
+      });
+    };
 
-    // onMounted(() => {
-    //   handleQuery({
-    //     page: 1,
-    //     size: pagination.value.pageSize
-    //   });
-    // });
+    onMounted(() => {
+      handleQuery({
+        page: 1,
+        size: pagination.value.pageSize
+      });
+    });
 
     return {
       PASSENGER_TYPE_ARRAY,
@@ -190,11 +192,11 @@ export default defineComponent({
       passengers,
       pagination,
       columns,
-      // handleTableChange,
-      // handleQuery,
+      handleTableChange,
+      handleQuery,
       loading,
       onAdd,
-      // handleOk,
+      handleOk,
       // onEdit,
       // onDelete
     };

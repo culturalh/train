@@ -1,13 +1,18 @@
 package com.jxau.train.member.resp;
 
+
 import com.fasterxml.jackson.annotation.JsonFormat;
-import jakarta.validation.constraints.Pattern;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+
 
 import java.util.Date;
 
 public class PassengerQueryResp {
-    private Long id;
 
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Long id;
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long memberId;
 
     private String name;
