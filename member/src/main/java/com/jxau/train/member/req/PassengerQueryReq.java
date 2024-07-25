@@ -1,6 +1,8 @@
 package com.jxau.train.member.req;
 
-public class PassengerQueryReq {
+import com.jxau.train.common.req.PageReq;
+
+public class PassengerQueryReq extends PageReq {
 
     private Long memberId;
 
