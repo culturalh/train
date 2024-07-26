@@ -9,6 +9,7 @@ import com.jxau.train.member.resp.PassengerQueryResp;
 import com.jxau.train.member.service.PassengerService;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
+import org.apache.ibatis.annotations.Delete;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -35,5 +36,12 @@ public class PassengerController {
         req.setMemberId(LoginMemberContext.getId());
         PageResp<PassengerQueryResp> list = passengerService.queryList(req);
         return new CommonResp<>(list);
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public CommonResp<Object> delete(@PathVariable Long id)
+    {
+        passengerService.delete(id);
+        return new CommonResp<>();
     }
 }

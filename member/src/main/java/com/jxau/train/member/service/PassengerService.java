@@ -13,4 +13,7 @@ public interface PassengerService {
 
     //根据会员id查询乘车人信息
     PageResp<PassengerQueryResp> queryList(PassengerQueryReq req);
+
+    //根据会员id删除
+    void delete(Long id);
 }

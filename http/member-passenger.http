@@ -1,3 +1,8 @@
+DELETE http://localhost:8000/member/passenger/delete/1816446392453959680
+Content-Type: application/x-www-form-urlencoded
+token: {{token}}
+
+###
 GET http://localhost:8000/member/passenger/query-list?page=1&size=2
 Accept: application/json
 token: {{token}}
