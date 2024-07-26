@@ -4,7 +4,6 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.ObjectUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.jxau.train.common.context.LoginMemberContext;
 import com.jxau.train.common.resp.PageResp;
 import com.jxau.train.common.util.SnowUtil;
 import com.jxau.train.${module}.domain.${Domain};
@@ -37,8 +36,6 @@ public class ${Domain}ServiceImpl implements ${Domain}Service {
         if(ObjectUtil.isNull(req.getId())){
             //使用雪花算法生成ID
             ${domain}.setId(SnowUtil.getSnowFlakeId());
-            //从上下文本地变量中获取登录用户会员ID
-            ${domain}.setMemberId(LoginMemberContext.getId());
             ${domain}.setCreateTime(now);
             ${domain}.setUpdateTime(now);
             ${domain}Mapper.insert(${domain});
@@ -55,9 +52,8 @@ public class ${Domain}ServiceImpl implements ${Domain}Service {
         ${Domain}Example ${domain}Example = new ${Domain}Example();
         //创建条件
         ${Domain}Example.Criteria criteria = ${domain}Example.createCriteria();
-        if(ObjectUtil.isNotNull(req.getMemberId())){
-            criteria.andMemberIdEqualTo(req.getMemberId());
-        }
+
+
         //开始分页
         PageHelper.startPage(req.getPage(),req.getSize());
         List<${Domain}> ${domain}List = ${domain}Mapper.selectByExample(${domain}Example);
