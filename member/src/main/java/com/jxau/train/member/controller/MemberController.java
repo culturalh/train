@@ -1,5 +1,6 @@
 package com.jxau.train.member.controller;
 
+import com.jxau.train.common.context.LoginMemberContext;
 import com.jxau.train.common.resp.CommonResp;
 import com.jxau.train.member.req.MemberLoginReq;
 import com.jxau.train.member.req.MemberRegisterReq;

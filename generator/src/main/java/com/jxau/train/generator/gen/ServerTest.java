@@ -1,4 +1,4 @@
-package com.jxau.train.generator.server;
+package com.jxau.train.generator.gen;
 
 
 import com.jxau.train.generator.util.DbUtil;
@@ -15,8 +15,11 @@ import java.io.IOException;
 import java.util.*;
 
 public class ServerTest {
+    static boolean readOnly = false;
+    static String vuePath = "web\\src\\views\\main\\";
     static String serverPath = "[module]\\src\\main\\java\\com\\jxau\\train\\[module]\\";
     static String pomPath = "generator\\pom.xml";
+    static String module = "";
     static {
         new File(serverPath).mkdirs();
     }
@@ -26,8 +29,8 @@ public class ServerTest {
         String module = generatorPath.replace("src/main/resources/generator-config-", "").replace(".xml", "");
         System.out.println("module:"+module);
         Document document = new SAXReader().read("generator/"+generatorPath);
-         serverPath = serverPath.replace("[module]", module);
-         new File(serverPath).mkdirs();
+        serverPath = serverPath.replace("[module]", module);
+        new File(serverPath).mkdirs();
         System.out.println("servicePath:"+serverPath);
         //读取对应的table
         Node table = document.selectSingleNode("//table");
@@ -72,15 +75,18 @@ public class ServerTest {
         param.put("fieldList",fieldList);
         param.put("typeSet",typeSet);
         param.put("module",module);
+        param.put("readOnly",readOnly);
         System.out.println("组装参数："+param);
 
 
 //        gen(Domain, param,"service","service");
 //        gen(Domain, param,"controller","controller");
 //        gen(Domain, param,"req","saveReq");
-        gen(Domain, param,"req","queryReq");
-        gen(Domain, param,"resp","queryResp");
+//        gen(Domain, param,"req","queryReq");
+//        gen(Domain, param,"resp","queryResp");
 //        gen1(Domain, param,"serviceImpl");
+
+        genVue(do_main, param);
     }
 
     private static void gen(String Domain, Map<String, Object> param,String packageName,String target) throws IOException, TemplateException {
@@ -111,6 +117,14 @@ public class ServerTest {
         Node node = document.selectSingleNode("//pom:configurationFile");
         System.out.println(node.getText());
         return node.getText();
+    }
+
+        private static void genVue(String do_main, Map<String, Object> param) throws IOException, TemplateException {
+        FreemarkerUtil.initConfig("vue.ftl");
+        new File(vuePath + module).mkdirs();
+        String fileName = vuePath + module + "/" + do_main + ".vue";
+        System.out.println("开始生成：" + fileName);
+        FreemarkerUtil.generator(fileName, param);
     }
 
     /**
