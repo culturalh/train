@@ -53,9 +53,9 @@ public class ServerTest {
         System.out.println("组装参数："+param);
 
 
-        gen(Domain, param,"service");
-        gen(Domain, param,"controller");
-
+//        gen(Domain, param,"service");
+//        gen(Domain, param,"controller");
+        gen1(Domain, param,"serviceImpl");
     }
 
     private static void gen(String Domain, Map<String, Object> param,String target) throws IOException, TemplateException {
@@ -67,7 +67,16 @@ public class ServerTest {
         System.out.println("开始生成："+fileName);
         FreemarkerUtil.generator(fileName, param);
     }
-
+    private static void gen1(String Domain, Map<String, Object> param,String target) throws IOException, TemplateException {
+        FreemarkerUtil.initConfig(target+".ftl");
+        target = target.substring(0, 7);
+        String toPath = serverPath + target + "\\impl\\";
+        new File(toPath).mkdirs();
+        String Target = target.substring(0, 1).toUpperCase() + target.substring(1)+"Impl";
+        String fileName = toPath + Domain + Target + ".java";
+        System.out.println("开始生成："+fileName);
+        FreemarkerUtil.generator(fileName, param);
+    }
     private static String getGeneratorPath() throws DocumentException {
         SAXReader saxReader = new SAXReader();
         Map<String, String> map = new HashMap<>();

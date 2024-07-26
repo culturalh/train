@@ -23,14 +23,14 @@ import java.util.Date;
 import java.util.List;
 
 @Service
-//public class PassengerServiceImpl implements PassengerService {
-public class PassengerServiceImpl  {
+public class PassengerServiceImpl implements PassengerService {
+
     private static final Logger LOG = LoggerFactory.getLogger(PassengerServiceImpl.class);
 
     @Resource
     private PassengerMapper passengerMapper;
 
-//    @Override
+    @Override
     public void save(PassengerSaveReq req) {
         Date now = new Date();
         Passenger passenger = BeanUtil.copyProperties(req, Passenger.class);
@@ -48,7 +48,7 @@ public class PassengerServiceImpl  {
         }
     }
 
-//    @Override
+    @Override
     public PageResp<PassengerQueryResp> queryList(PassengerQueryReq req) {
 
         //mybatis条件查询类
@@ -74,7 +74,7 @@ public class PassengerServiceImpl  {
         return pageResp;
     }
 
-//    @Override
+    @Override
     public void delete(Long id) {
         passengerMapper.deleteByPrimaryKey(id);
     }
