@@ -1,4 +1,4 @@
-package com.jxau.train.member.req;
+package com.jxau.train.${module}.req;
 
 <#list typeSet as type>
 <#if type=='Date'>

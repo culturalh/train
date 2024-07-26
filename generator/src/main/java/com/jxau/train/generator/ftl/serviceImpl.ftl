@@ -1,4 +1,4 @@
-package com.jxau.train.member.service.impl;
+package com.jxau.train.${module}.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.ObjectUtil;
@@ -7,13 +7,13 @@ import com.github.pagehelper.PageInfo;
 import com.jxau.train.common.context.LoginMemberContext;
 import com.jxau.train.common.resp.PageResp;
 import com.jxau.train.common.util.SnowUtil;
-import com.jxau.train.member.domain.${Domain};
-import com.jxau.train.member.domain.${Domain}Example;
-import com.jxau.train.member.mapper.${Domain}Mapper;
-import com.jxau.train.member.req.${Domain}QueryReq;
-import com.jxau.train.member.req.${Domain}SaveReq;
-import com.jxau.train.member.resp.${Domain}QueryResp;
-import com.jxau.train.member.service.${Domain}Service;
+import com.jxau.train.${module}.domain.${Domain};
+import com.jxau.train.${module}.domain.${Domain}Example;
+import com.jxau.train.${module}.mapper.${Domain}Mapper;
+import com.jxau.train.${module}.req.${Domain}QueryReq;
+import com.jxau.train.${module}.req.${Domain}SaveReq;
+import com.jxau.train.${module}.resp.${Domain}QueryResp;
+import com.jxau.train.${module}.service.${Domain}Service;
 import jakarta.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

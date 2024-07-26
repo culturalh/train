@@ -71,7 +71,7 @@ public class ServerTest {
         param.put("tableNameCn",tableNameCn);
         param.put("fieldList",fieldList);
         param.put("typeSet",typeSet);
-
+        param.put("module",module);
         System.out.println("组装参数："+param);
 
 
