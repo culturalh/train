@@ -116,20 +116,20 @@ export default defineComponent({
       visible.value = true;
     };
 
-    // const onDelete = (record) => {
-    //   axios.delete("/member/passenger/delete/" + record.id).then((response) => {
-    //     const data = response.data;
-    //     if (data.success) {
-    //       notification.success({description: "删除成功！"});
-    //       handleQuery({
-    //         page: pagination.value.current,
-    //         size: pagination.value.pageSize,
-    //       });
-    //     } else {
-    //       notification.error({description: data.message});
-    //     }
-    //   });
-    // };
+    const onDelete = (record) => {
+      axios.delete("/member/passenger/delete/" + record.id).then((response) => {
+        const data = response.data;
+        if (data.success) {
+          notification.success({description: "删除成功！"});
+          handleQuery({
+            page: pagination.value.current,
+            size: pagination.value.pageSize,
+          });
+        } else {
+          notification.error({description: data.message});
+        }
+      });
+    };
 
     const handleOk = () => {
       axios.post("/member/passenger/save", passenger.value).then((response) => {
@@ -202,7 +202,7 @@ export default defineComponent({
       onAdd,
       handleOk,
       onEdit,
-      // onDelete
+      onDelete
     };
   },
 });
