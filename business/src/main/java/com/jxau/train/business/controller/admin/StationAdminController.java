@@ -1,4 +1,4 @@
-package com.jxau.train.business.controller;
+package com.jxau.train.business.controller.admin;
 
 import com.jxau.train.common.context.LoginMemberContext;
 import com.jxau.train.common.resp.CommonResp;
@@ -12,8 +12,8 @@ import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/station")
-public class StationController {
+@RequestMapping("/admin/station")
+public class StationAdminController {
 
     @Resource
     private StationService stationService;
