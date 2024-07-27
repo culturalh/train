@@ -26,7 +26,7 @@ public class ${Domain}AdminController {
     }
 
     @GetMapping("/query-list")
-    public CommonResp<PageResp<${Domain}QueryResp>> save(@Valid ${Domain}QueryReq req)
+    public CommonResp<PageResp<${Domain}QueryResp>> queryList(@Valid ${Domain}QueryReq req)
     {
         PageResp<${Domain}QueryResp> list = ${domain}Service.queryList(req);
         return new CommonResp<>(list);

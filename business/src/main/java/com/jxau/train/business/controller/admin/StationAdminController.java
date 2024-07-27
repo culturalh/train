@@ -26,7 +26,7 @@ public class StationAdminController {
     }
 
     @GetMapping("/query-list")
-    public CommonResp<PageResp<StationQueryResp>> save(@Valid StationQueryReq req)
+    public CommonResp<PageResp<StationQueryResp>> queryList(@Valid StationQueryReq req)
     {
         PageResp<StationQueryResp> list = stationService.queryList(req);
         return new CommonResp<>(list);

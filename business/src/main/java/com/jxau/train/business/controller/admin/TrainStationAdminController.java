@@ -26,7 +26,7 @@ public class TrainStationAdminController {
     }
 
     @GetMapping("/query-list")
-    public CommonResp<PageResp<TrainStationQueryResp>> save(@Valid TrainStationQueryReq req)
+    public CommonResp<PageResp<TrainStationQueryResp>> queryList(@Valid TrainStationQueryReq req)
     {
         PageResp<TrainStationQueryResp> list = trainStationService.queryList(req);
         return new CommonResp<>(list);

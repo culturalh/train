@@ -11,6 +11,8 @@ import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/admin/train")
 public class TrainAdminController {
@@ -26,7 +28,7 @@ public class TrainAdminController {
     }
 
     @GetMapping("/query-list")
-    public CommonResp<PageResp<TrainQueryResp>> save(@Valid TrainQueryReq req)
+    public CommonResp<PageResp<TrainQueryResp>> queryList(@Valid TrainQueryReq req)
     {
         PageResp<TrainQueryResp> list = trainService.queryList(req);
         return new CommonResp<>(list);
@@ -37,5 +39,12 @@ public class TrainAdminController {
     {
         trainService.delete(id);
         return new CommonResp<>();
+    }
+
+    //查询所有车次信息
+    @GetMapping("/query-all")
+    public CommonResp<List<TrainQueryResp>> queryAll(){
+        List<TrainQueryResp> list = trainService.queryAll();
+        return new CommonResp<>(list);
     }
 }
