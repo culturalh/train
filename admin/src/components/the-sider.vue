@@ -35,6 +35,11 @@
           <user-outlined /> &nbsp; 火车车厢
         </router-link>
       </a-menu-item>
+      <a-menu-item key="/train-seat">
+        <router-link to="/train-seat">
+          <user-outlined /> &nbsp; 火车座位
+        </router-link>
+      </a-menu-item>
 <!--      <a-menu-item key="/ticket">-->
 <!--        <router-link to="/ticket">-->
 <!--          <border-outer-outlined /> &nbsp; 余票查询-->

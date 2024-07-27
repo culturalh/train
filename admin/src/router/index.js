@@ -36,6 +36,10 @@ const routes = [
         path:'train-carriage',
         component: () => import('../views/main/train-carriage.vue')
       },
+      {
+        path:'train-seat',
+        component: () => import('../views/main/train-seat.vue')
+      },
       // {
       //   path: 'ticket',
       //   component: () => import('../views/main/ticket.vue')
