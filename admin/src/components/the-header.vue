@@ -1,9 +1,10 @@
 <template>
   <a-layout-header class="header"  >
-    <div class="logo" />
+    <div class="logo" >
+      <router-link to="/welcome">小木子12306控制台</router-link>
+    </div>
     <div style="float: right; color: white" >
-      您好:{{member.mobile}} &nbsp;&nbsp;
-      <router-link to="/login" style="color: white">退出登录</router-link>
+      欢迎使用管理控制台！
     </div>
     <a-menu
         v-model:selectedKeys="selectedKeys"
@@ -16,9 +17,9 @@
           <coffee-outlined /> &nbsp; 欢迎
         </router-link>
       </a-menu-item>
-      <a-menu-item key="/passenger">
-        <router-link to="/passenger">
-          <user-outlined /> &nbsp; 乘车人管理
+      <a-menu-item key="/about">
+        <router-link to="/about">
+          <user-outlined /> &nbsp; 关于
         </router-link>
       </a-menu-item>
 <!--      <a-menu-item key="/ticket">-->
@@ -52,7 +53,7 @@ import router from "@/router";
 export default defineComponent({
   name: "the-header-view",
   setup() {
-    let member = store.state.member;
+
     const selectedKeys = ref([]);
 
     watch(() => router.currentRoute.value.path, (newValue) => {
@@ -61,7 +62,6 @@ export default defineComponent({
       selectedKeys.value.push(newValue);
     }, {immediate: true});
     return {
-      member,
       selectedKeys
     };
   },
@@ -70,5 +70,11 @@ export default defineComponent({
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-
+.logo {
+  float: left;
+  height: 31px;
+  width: 200px;
+  color: white;
+  font-size: 20px;
+}
 </style>
