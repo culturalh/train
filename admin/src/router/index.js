@@ -28,6 +28,10 @@ const routes = [
         path:'train',
         component: () => import('../views/main/train.vue')
       },
+      {
+        path:'train-station',
+        component: () => import('../views/main/train-station.vue')
+      },
       // {
       //   path: 'ticket',
       //   component: () => import('../views/main/ticket.vue')
