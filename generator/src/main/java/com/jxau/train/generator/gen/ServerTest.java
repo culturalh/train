@@ -45,7 +45,6 @@ public class ServerTest {
         // do_main = jiawa-test
         String do_main = tableName.getText().replaceAll("_", "-");
 
-
         // 为DbUtil设置数据源
         Node connectionURL = document.selectSingleNode("//@connectionURL");
         Node userId = document.selectSingleNode("//@userId");
@@ -56,9 +55,6 @@ public class ServerTest {
         DbUtil.url = connectionURL.getText();
         DbUtil.user = userId.getText();
         DbUtil.password = password.getText();
-
-
-
 
         // 表中文名
         String tableNameCn = DbUtil.getTableComment(tableName.getText());
