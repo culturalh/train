@@ -16,7 +16,7 @@ import java.util.*;
 
 public class ServerTest {
     static boolean readOnly = false;
-    static String vuePath = "web\\src\\views\\main\\";
+    static String vuePath = "admin\\src\\views\\main\\";
     static String serverPath = "[module]\\src\\main\\java\\com\\jxau\\train\\[module]\\";
     static String pomPath = "generator\\pom.xml";
     static String module = "";
@@ -79,12 +79,12 @@ public class ServerTest {
         System.out.println("组装参数："+param);
 
 
-//        gen(Domain, param,"service","service");
-//        gen(Domain, param,"controller","controller");
-//        gen(Domain, param,"req","saveReq");
-//        gen(Domain, param,"req","queryReq");
-//        gen(Domain, param,"resp","queryResp");
-//        gen1(Domain, param,"serviceImpl");
+        gen(Domain, param,"service","service");
+        gen(Domain, param,"controller","controller");
+        gen(Domain, param,"req","saveReq");
+        gen(Domain, param,"req","queryReq");
+        gen(Domain, param,"resp","queryResp");
+        gen1(Domain, param,"serviceImpl");
 
         genVue(do_main, param);
     }

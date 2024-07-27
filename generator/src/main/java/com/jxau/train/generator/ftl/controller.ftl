@@ -28,8 +28,6 @@ public class ${Domain}Controller {
     @GetMapping("/query-list")
     public CommonResp<PageResp<${Domain}QueryResp>> save(@Valid ${Domain}QueryReq req)
     {
-        //线程本地变量中保存着会员id
-        req.setMemberId(LoginMemberContext.getId());
         PageResp<${Domain}QueryResp> list = ${domain}Service.queryList(req);
         return new CommonResp<>(list);
     }
