@@ -14,4 +14,7 @@ public interface TrainSeatService {
 
     //根据会员id删除
     void delete(Long id);
+
+    //生成座位数
+    void genTrainSeat(String trainCode);
 }

@@ -1,5 +1,6 @@
 package com.jxau.train.business.controller.admin;
 
+import com.jxau.train.business.service.TrainSeatService;
 import com.jxau.train.common.context.LoginMemberContext;
 import com.jxau.train.common.resp.CommonResp;
 import com.jxau.train.common.resp.PageResp;
@@ -19,6 +20,9 @@ public class TrainAdminController {
 
     @Resource
     private TrainService trainService;
+
+    @Resource
+    private TrainSeatService trainSeatService;
 
     @PostMapping("/save")
     public CommonResp<Object> save(@Valid @RequestBody TrainSaveReq req)
@@ -46,5 +50,12 @@ public class TrainAdminController {
     public CommonResp<List<TrainQueryResp>> queryAll(){
         List<TrainQueryResp> list = trainService.queryAll();
         return new CommonResp<>(list);
+    }
+
+    @GetMapping("/gen-seat/{trainCode}")
+    public CommonResp<Object> genTrainSeat(@PathVariable String trainCode)
+    {
+        trainSeatService.genTrainSeat(trainCode);
+        return new CommonResp<>();
     }
 }
