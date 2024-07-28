@@ -50,9 +50,12 @@ public class TrainStationServiceImpl implements TrainStationService {
 
         //mybatis条件查询类
         TrainStationExample trainStationExample = new TrainStationExample();
+        trainStationExample.setOrderByClause("train_code asc, `index` asc");
         //创建条件
         TrainStationExample.Criteria criteria = trainStationExample.createCriteria();
-
+        if(ObjectUtil.isNotNull(req.getTrainCode())){
+            criteria.andTrainCodeEqualTo(req.getTrainCode());
+        }
 
         //开始分页
         PageHelper.startPage(req.getPage(),req.getSize());
