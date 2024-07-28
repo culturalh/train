@@ -50,9 +50,12 @@ public class TrainSeatServiceImpl implements TrainSeatService {
 
         //mybatis条件查询类
         TrainSeatExample trainSeatExample = new TrainSeatExample();
+        trainSeatExample.setOrderByClause("train_code asc,carriage_index asc,carriage_seat_index asc");
         //创建条件
         TrainSeatExample.Criteria criteria = trainSeatExample.createCriteria();
-
+        if(ObjectUtil.isNotEmpty(req.getTrainCode())){
+            criteria.andTrainCodeEqualTo(req.getTrainCode());
+        }
 
         //开始分页
         PageHelper.startPage(req.getPage(),req.getSize());
