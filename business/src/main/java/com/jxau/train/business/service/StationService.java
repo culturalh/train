@@ -5,6 +5,8 @@ import com.jxau.train.business.req.StationQueryReq;
 import com.jxau.train.business.req.StationSaveReq;
 import com.jxau.train.business.resp.StationQueryResp;
 
+import java.util.List;
+
 public interface StationService {
     //新增乘车人信息
     void save(StationSaveReq req);
@@ -14,4 +16,7 @@ public interface StationService {
 
     //根据会员id删除
     void delete(Long id);
+
+    //查询所有车站信息
+    List<StationQueryResp> queryAll();
 }

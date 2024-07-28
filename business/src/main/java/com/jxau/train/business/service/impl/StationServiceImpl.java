@@ -4,6 +4,9 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.ObjectUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.jxau.train.business.domain.Train;
+import com.jxau.train.business.domain.TrainExample;
+import com.jxau.train.business.resp.TrainQueryResp;
 import com.jxau.train.common.resp.PageResp;
 import com.jxau.train.common.util.SnowUtil;
 import com.jxau.train.business.domain.Station;
@@ -73,5 +76,15 @@ public class StationServiceImpl implements StationService {
     @Override
     public void delete(Long id) {
         stationMapper.deleteByPrimaryKey(id);
+    }
+
+    @Override
+    public List<StationQueryResp> queryAll() {
+        //mybatis条件查询类
+        StationExample trainExample = new StationExample();
+        trainExample.setOrderByClause("name_pinyin asc");
+        List<Station> trainList = stationMapper.selectByExample(trainExample);
+        List<StationQueryResp> trainQueryResp = BeanUtil.copyToList(trainList, StationQueryResp.class);
+        return trainQueryResp;
     }
 }

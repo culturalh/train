@@ -1,5 +1,6 @@
 package com.jxau.train.business.controller.admin;
 
+import com.jxau.train.business.resp.TrainQueryResp;
 import com.jxau.train.common.context.LoginMemberContext;
 import com.jxau.train.common.resp.CommonResp;
 import com.jxau.train.common.resp.PageResp;
@@ -10,6 +11,8 @@ import com.jxau.train.business.service.StationService;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/admin/station")
@@ -37,5 +40,12 @@ public class StationAdminController {
     {
         stationService.delete(id);
         return new CommonResp<>();
+    }
+
+    //查询所有车次信息
+    @GetMapping("/query-all")
+    public CommonResp<List<StationQueryResp>> queryAll(){
+        List<StationQueryResp> list = stationService.queryAll();
+        return new CommonResp<>(list);
     }
 }
