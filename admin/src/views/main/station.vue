@@ -31,10 +31,10 @@
         <a-input v-model:value="station.name" />
       </a-form-item>
       <a-form-item label="站名拼音">
-        <a-input v-model:value="station.namePinyin" disabled />
+        <a-input v-model:value="station.namePinyin" disabled/>
       </a-form-item>
       <a-form-item label="拼音首字母">
-        <a-input v-model:value="station.namePy" disabled />
+        <a-input v-model:value="station.namePy" disabled/>
       </a-form-item>
     </a-form>
   </a-modal>
@@ -89,11 +89,11 @@ export default defineComponent({
 
     watch(()=>station.value.name,() => {
       if(Tool.isNotEmpty(station.value.name)){
-        station.value.namePinyin = pinyin(station.value.name, {toneType:'none'}).replace(" ","");
-        station.value.namePy = pinyin(station.value.name, {pattern:'first',toneType:'none'}).replace(" ","");
+        station.value.namePinyin = pinyin(station.value.name, {toneType: 'none'}).replace(" ","");
+        station.value.namePy = pinyin(station.value.name, {pattern: 'first',toneType: 'none'}).replace(" ","");
       }else {
         station.value.namePinyin = "";
-        station.value.namePy =""
+        station.value.namePy = "";
       }
     },{immediate:true});
 
@@ -193,7 +193,7 @@ export default defineComponent({
       onAdd,
       handleOk,
       onEdit,
-      onDelete
+      onDelete,
     };
   },
 });

@@ -4,6 +4,7 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.ObjectUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.jxau.train.business.enums.SeatColEnum;
 import com.jxau.train.common.resp.PageResp;
 import com.jxau.train.common.util.SnowUtil;
 import com.jxau.train.business.domain.TrainCarriage;
@@ -32,6 +33,9 @@ public class TrainCarriageServiceImpl implements TrainCarriageService {
     @Override
     public void save(TrainCarriageSaveReq req) {
         Date now = new Date();
+        List<SeatColEnum> colsByType = SeatColEnum.getColsByType(req.getSeatType());
+        req.setColCount(colsByType.size());
+        req.setSeatCount(req.getRowCount() * req.getColCount());
         TrainCarriage trainCarriage = BeanUtil.copyProperties(req, TrainCarriage.class);
         if(ObjectUtil.isNull(req.getId())){
             //使用雪花算法生成ID
