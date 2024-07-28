@@ -50,10 +50,12 @@ public class TrainCarriageServiceImpl implements TrainCarriageService {
 
         //mybatis条件查询类
         TrainCarriageExample trainCarriageExample = new TrainCarriageExample();
+        trainCarriageExample.setOrderByClause("train_code asc, `index` asc");
         //创建条件
         TrainCarriageExample.Criteria criteria = trainCarriageExample.createCriteria();
-
-
+        if(ObjectUtil.isNotEmpty(req.getTrainCode())){
+            criteria.andTrainCodeEqualTo(req.getTrainCode());
+        }
         //开始分页
         PageHelper.startPage(req.getPage(),req.getSize());
         List<TrainCarriage> trainCarriageList = trainCarriageMapper.selectByExample(trainCarriageExample);

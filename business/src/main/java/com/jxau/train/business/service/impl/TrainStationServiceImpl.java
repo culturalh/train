@@ -53,7 +53,7 @@ public class TrainStationServiceImpl implements TrainStationService {
         trainStationExample.setOrderByClause("train_code asc, `index` asc");
         //创建条件
         TrainStationExample.Criteria criteria = trainStationExample.createCriteria();
-        if(ObjectUtil.isNotNull(req.getTrainCode())){
+        if(ObjectUtil.isNotEmpty(req.getTrainCode())){
             criteria.andTrainCodeEqualTo(req.getTrainCode());
         }
 
