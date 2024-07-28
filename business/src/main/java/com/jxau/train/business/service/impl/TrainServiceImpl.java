@@ -80,7 +80,7 @@ public class TrainServiceImpl implements TrainService {
     public List<TrainQueryResp> queryAll() {
         //mybatis条件查询类
         TrainExample trainExample = new TrainExample();
-        trainExample.setOrderByClause("code desc");
+        trainExample.setOrderByClause("code asc");
         List<Train> trainList = trainMapper.selectByExample(trainExample);
         List<TrainQueryResp> trainQueryResp = BeanUtil.copyToList(trainList, TrainQueryResp.class);
         return trainQueryResp;
