@@ -30,7 +30,7 @@ public class DailyTrainCarriageQueryReq extends PageReq {
 
     @Override
     public String toString() {
-        return "DailyTrainStationQueryReq{" +
+        return "DailyTrainCarriageQueryReq{" +
                 "trainCode='" + trainCode + '\'' +
                 ", date=" + date +
                 "} " + super.toString();

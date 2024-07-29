@@ -54,7 +54,7 @@ public class DailyTrainCarriageServiceImpl implements DailyTrainCarriageService 
 
         //mybatis条件查询类
         DailyTrainCarriageExample dailyTrainCarriageExample = new DailyTrainCarriageExample();
-        dailyTrainCarriageExample.setOrderByClause("date desc,train_code asc,`index` asc");
+        dailyTrainCarriageExample.setOrderByClause("train_code desc,carriage_index asc,carriage_seat_index asc");
         //创建条件
         DailyTrainCarriageExample.Criteria criteria = dailyTrainCarriageExample.createCriteria();
 
