@@ -16,9 +16,9 @@ import java.util.*;
 
 public class ServerTest {
     static boolean readOnly = false;
-    static String vuePath = "admin\\src\\views\\main\\";
-    static String serverPath = "[module]\\src\\main\\java\\com\\jxau\\train\\[module]\\";
-    static String pomPath = "generator\\pom.xml";
+    static String vuePath = "admin/src/views/main/";
+    static String serverPath = "[module]/src/main/java/com/jxau/train/[module]/";
+    static String pomPath = "generator/pom.xml";
     static String module = "";
     static {
         new File(serverPath).mkdirs();
@@ -87,7 +87,7 @@ public class ServerTest {
 
     private static void gen(String Domain, Map<String, Object> param,String packageName,String target) throws IOException, TemplateException {
         FreemarkerUtil.initConfig(target+".ftl");
-        String toPath = serverPath + packageName + "\\";
+        String toPath = serverPath + packageName + "/";
         new File(toPath).mkdirs();
         String Target = target.substring(0, 1).toUpperCase() + target.substring(1);
         String fileName = toPath + Domain + Target + ".java";
@@ -97,7 +97,7 @@ public class ServerTest {
     private static void gen1(String Domain, Map<String, Object> param,String target) throws IOException, TemplateException {
         FreemarkerUtil.initConfig(target+".ftl");
         target = target.substring(0, 7);
-        String toPath = serverPath + target + "\\impl\\";
+        String toPath = serverPath + target + "/impl/";
         new File(toPath).mkdirs();
         String Target = target.substring(0, 1).toUpperCase() + target.substring(1)+"Impl";
         String fileName = toPath + Domain + Target + ".java";
@@ -118,7 +118,7 @@ public class ServerTest {
         private static void genVue(String do_main, Map<String, Object> param) throws IOException, TemplateException {
         FreemarkerUtil.initConfig("vue.ftl");
         new File(vuePath + module).mkdirs();
-        String fileName = vuePath + module + "\\" + do_main + ".vue";
+        String fileName = vuePath + module + "/" + do_main + ".vue";
         System.out.println("开始生成：" + fileName);
         FreemarkerUtil.generator(fileName, param);
     }
