@@ -1,12 +1,15 @@
 package com.jxau.train.business.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjectUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.jxau.train.business.domain.Train;
 import com.jxau.train.business.domain.TrainExample;
 import com.jxau.train.business.resp.TrainQueryResp;
+import com.jxau.train.common.exception.BusinessException;
+import com.jxau.train.common.exception.BusinessExceptionEnum;
 import com.jxau.train.common.resp.PageResp;
 import com.jxau.train.common.util.SnowUtil;
 import com.jxau.train.business.domain.Station;
@@ -34,9 +37,17 @@ public class StationServiceImpl implements StationService {
 
     @Override
     public void save(StationSaveReq req) {
+
         Date now = new Date();
         Station station = BeanUtil.copyProperties(req, Station.class);
         if(ObjectUtil.isNull(req.getId())){
+
+            //创建条件
+            Station stationDB = selectByUnique(req.getName());
+            if(ObjectUtil.isNotEmpty(stationDB)){
+                throw new BusinessException(BusinessExceptionEnum.BUSINESS_STATION_NAME_UNIQUE_ERROR);
+            }
+
             //使用雪花算法生成ID
             station.setId(SnowUtil.getSnowFlakeId());
             station.setCreateTime(now);
@@ -45,6 +56,18 @@ public class StationServiceImpl implements StationService {
         }else {
             station.setUpdateTime(now);
             stationMapper.updateByPrimaryKey(station);
+        }
+    }
+
+    private Station selectByUnique(String name) {
+        StationExample stationExample = new StationExample();
+        StationExample.Criteria criteria = stationExample.createCriteria();
+        criteria.andNameEqualTo(name);
+        List<Station> stations = stationMapper.selectByExample(stationExample);
+        if(CollUtil.isNotEmpty(stations)){
+            return stations.get(0);
+        }else {
+            return null;
         }
     }
 

@@ -1,10 +1,15 @@
 package com.jxau.train.business.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjectUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.jxau.train.business.domain.Station;
+import com.jxau.train.business.domain.StationExample;
 import com.jxau.train.business.enums.SeatColEnum;
+import com.jxau.train.common.exception.BusinessException;
+import com.jxau.train.common.exception.BusinessExceptionEnum;
 import com.jxau.train.common.resp.PageResp;
 import com.jxau.train.common.util.SnowUtil;
 import com.jxau.train.business.domain.TrainCarriage;
@@ -38,6 +43,11 @@ public class TrainCarriageServiceImpl implements TrainCarriageService {
         req.setSeatCount(req.getRowCount() * req.getColCount());
         TrainCarriage trainCarriage = BeanUtil.copyProperties(req, TrainCarriage.class);
         if(ObjectUtil.isNull(req.getId())){
+
+            TrainCarriage trainCarriageDB = selectByUnique(req.getTrainCode(),req.getIndex());
+            if(ObjectUtil.isNotEmpty(trainCarriageDB)){
+                throw new BusinessException(BusinessExceptionEnum.BUSINESS_TRAIN_CARRIAGE_INDEX_UNIQUE_ERROR);
+            }
             //使用雪花算法生成ID
             trainCarriage.setId(SnowUtil.getSnowFlakeId());
             trainCarriage.setCreateTime(now);
@@ -49,6 +59,17 @@ public class TrainCarriageServiceImpl implements TrainCarriageService {
         }
     }
 
+    private TrainCarriage selectByUnique(String trainCode,Integer index) {
+        TrainCarriageExample trainCarriageExample = new TrainCarriageExample();
+        TrainCarriageExample.Criteria criteria = trainCarriageExample.createCriteria();
+        criteria.andTrainCodeEqualTo(trainCode).andIndexEqualTo(index);
+        List<TrainCarriage> trainCarriages = trainCarriageMapper.selectByExample(trainCarriageExample);
+        if(CollUtil.isNotEmpty(trainCarriages)){
+            return trainCarriages.get(0);
+        }else {
+            return null;
+        }
+    }
     @Override
     public PageResp<TrainCarriageQueryResp> queryList(TrainCarriageQueryReq req) {
 

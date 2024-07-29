@@ -29,50 +29,51 @@
            ok-text="确认" cancel-text="取消">
     <a-form :model="trainStation" :label-col="{span: 4}" :wrapper-col="{ span: 20 }">
       <a-form-item label="车次编号">
-<!--        <a-input v-model:value="trainStation.trainCode" />-->
-<!--        <a-select-->
-<!--            v-model:value="trainStation.trainCode"-->
-<!--            show-search-->
-<!--            :filter-option="filterTrainCodeOption"-->
-<!--        >-->
-<!--          <a-select-option v-for="item in trains" :key="item.code" :value="item.code" :label="item.code+item.start+item.end">-->
-<!--            {{ item.code}} | {{item.start}}~{{item.end }}-->
-<!--          </a-select-option>-->
-<!--        </a-select>-->
+        <!--        <a-input v-model:value="trainStation.trainCode" />-->
+        <!--        <a-select-->
+        <!--            v-model:value="trainStation.trainCode"-->
+        <!--            show-search-->
+        <!--            :filter-option="filterTrainCodeOption"-->
+        <!--        >-->
+        <!--          <a-select-option v-for="item in trains" :key="item.code" :value="item.code" :label="item.code+item.start+item.end">-->
+        <!--            {{ item.code}} | {{item.start}}~{{item.end }}-->
+        <!--          </a-select-option>-->
+        <!--        </a-select>-->
         <train-select-view v-model="trainStation.trainCode"></train-select-view>
       </a-form-item>
       <a-form-item label="站序">
-        <a-input v-model:value="trainStation.index" />
+        <a-input v-model:value="trainStation.index"/>
       </a-form-item>
       <a-form-item label="站名">
         <station-select-view v-model="trainStation.name"></station-select-view>
       </a-form-item>
       <a-form-item label="站名拼音">
-        <a-input v-model:value="trainStation.namePinyin" disabled />
+        <a-input v-model:value="trainStation.namePinyin" disabled/>
       </a-form-item>
       <a-form-item label="进站时间">
-        <a-time-picker v-model:value="trainStation.inTime" valueFormat="HH:mm:ss" placeholder="请选择时间" />
+        <a-time-picker v-model:value="trainStation.inTime" valueFormat="HH:mm:ss" placeholder="请选择时间"/>
       </a-form-item>
       <a-form-item label="出站时间">
-        <a-time-picker v-model:value="trainStation.outTime" valueFormat="HH:mm:ss" placeholder="请选择时间" />
+        <a-time-picker v-model:value="trainStation.outTime" valueFormat="HH:mm:ss" placeholder="请选择时间"/>
       </a-form-item>
       <a-form-item label="停站时长">
-        <a-time-picker v-model:value="trainStation.stopTime" valueFormat="HH:mm:ss" placeholder="请选择时间" />
+        <a-time-picker v-model:value="trainStation.stopTime" valueFormat="HH:mm:ss" placeholder="请选择时间" disabled/>
       </a-form-item>
       <a-form-item label="里程（公里）">
-        <a-input v-model:value="trainStation.km" />
+        <a-input v-model:value="trainStation.km"/>
       </a-form-item>
     </a-form>
   </a-modal>
 </template>
 
 <script>
-import { defineComponent, ref, onMounted ,watch } from 'vue';
+import {defineComponent, ref, onMounted, watch} from 'vue';
 import {notification} from "ant-design-vue";
 import axios from "axios";
 import {pinyin} from "pinyin-pro";
 import TrainSelectView from "@/components/train-select";
 import StationSelectView from "@/components/station-select";
+import dayjs from "dayjs";
 
 export default defineComponent({
   name: "train-station-view",
@@ -104,59 +105,69 @@ export default defineComponent({
       trainCode: null
     });
     const columns = [
-    {
-      title: '车次编号',
-      dataIndex: 'trainCode',
-      key: 'trainCode',
-    },
-    {
-      title: '站序',
-      dataIndex: 'index',
-      key: 'index',
-    },
-    {
-      title: '站名',
-      dataIndex: 'name',
-      key: 'name',
-    },
-    {
-      title: '站名拼音',
-      dataIndex: 'namePinyin',
-      key: 'namePinyin',
-    },
-    {
-      title: '进站时间',
-      dataIndex: 'inTime',
-      key: 'inTime',
-    },
-    {
-      title: '出站时间',
-      dataIndex: 'outTime',
-      key: 'outTime',
-    },
-    {
-      title: '停站时长',
-      dataIndex: 'stopTime',
-      key: 'stopTime',
-    },
-    {
-      title: '里程（公里）',
-      dataIndex: 'km',
-      key: 'km',
-    },
-    {
-      title: '操作',
-      dataIndex: 'operation'
-    }
+      {
+        title: '车次编号',
+        dataIndex: 'trainCode',
+        key: 'trainCode',
+      },
+      {
+        title: '站序',
+        dataIndex: 'index',
+        key: 'index',
+      },
+      {
+        title: '站名',
+        dataIndex: 'name',
+        key: 'name',
+      },
+      {
+        title: '站名拼音',
+        dataIndex: 'namePinyin',
+        key: 'namePinyin',
+      },
+      {
+        title: '进站时间',
+        dataIndex: 'inTime',
+        key: 'inTime',
+      },
+      {
+        title: '出站时间',
+        dataIndex: 'outTime',
+        key: 'outTime',
+      },
+      {
+        title: '停站时长',
+        dataIndex: 'stopTime',
+        key: 'stopTime',
+      },
+      {
+        title: '里程（公里）',
+        dataIndex: 'km',
+        key: 'km',
+      },
+      {
+        title: '操作',
+        dataIndex: 'operation'
+      }
     ];
 
-    watch(()=>trainStation.value.name,()=>{
-      if(Tool.isNotEmpty(trainStation.value.name)){
+    //计算停站时长
+    watch(() => trainStation.value.inTime, () => {
+      let diff = dayjs(trainStation.value.outTime, 'HH:mm:ss').diff(dayjs(trainStation.value.inTime, 'HH:mm:ss'), 'seconds');
+      trainStation.value.stopTime = dayjs('00:00:00', 'HH:mm:ss').second(diff).format('HH:mm:ss');
+    },{immediate: true});
+    watch(() => trainStation.value.outTime, () => {
+      let diff = dayjs(trainStation.value.outTime, 'HH:mm:ss').diff(dayjs(trainStation.value.inTime, 'HH:mm:ss'), 'seconds');
+      trainStation.value.stopTime = dayjs('00:00:00', 'HH:mm:ss').second(diff).format('HH:mm:ss');
+    },{immediate: true});
+
+    watch(() => trainStation.value.name, () => {
+      if (Tool.isNotEmpty(trainStation.value.name)) {
         trainStation.value.namePinyin = pinyin(trainStation.value.name, {toneType: 'none'});
-      }else {
+      } else {
         trainStation.value.namePinyin = "";
       }
-    },{immediate: true});
+    }, {immediate: true});
 
     //车次下拉框
     // const  trains = ref([])
@@ -178,15 +189,15 @@ export default defineComponent({
      * 车次下拉框的筛选
      */
 
-    // const filterTrainCodeOption = (input, option) => {
-    //   console.log(input, option);
-    //   return option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0
-    // };
+        // const filterTrainCodeOption = (input, option) => {
+        //   console.log(input, option);
+        //   return option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0
+        // };
 
     const onAdd = () => {
-      trainStation.value = {};
-      visible.value = true;
-    };
+          trainStation.value = {};
+          visible.value = true;
+        };
 
     const onEdit = (record) => {
       trainStation.value = window.Tool.copy(record);

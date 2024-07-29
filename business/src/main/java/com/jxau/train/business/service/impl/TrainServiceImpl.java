@@ -1,9 +1,14 @@
 package com.jxau.train.business.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjectUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.jxau.train.business.domain.TrainCarriage;
+import com.jxau.train.business.domain.TrainCarriageExample;
+import com.jxau.train.common.exception.BusinessException;
+import com.jxau.train.common.exception.BusinessExceptionEnum;
 import com.jxau.train.common.resp.PageResp;
 import com.jxau.train.common.util.SnowUtil;
 import com.jxau.train.business.domain.Train;
@@ -34,6 +39,11 @@ public class TrainServiceImpl implements TrainService {
         Date now = new Date();
         Train train = BeanUtil.copyProperties(req, Train.class);
         if(ObjectUtil.isNull(req.getId())){
+
+            Train trainDB = selectByUnique(req.getCode());
+            if(ObjectUtil.isNotEmpty(trainDB)){
+                throw new BusinessException(BusinessExceptionEnum.BUSINESS_TRAIN_CODE_UNIQUE_ERROR);
+            }
             //使用雪花算法生成ID
             train.setId(SnowUtil.getSnowFlakeId());
             train.setCreateTime(now);
@@ -45,6 +55,17 @@ public class TrainServiceImpl implements TrainService {
         }
     }
 
+    private Train selectByUnique(String code) {
+        TrainExample trainExample = new TrainExample();
+        TrainExample.Criteria criteria = trainExample.createCriteria();
+        criteria.andCodeEqualTo(code);
+        List<Train> trains = trainMapper.selectByExample(trainExample);
+        if(CollUtil.isNotEmpty(trains)){
+            return trains.get(0);
+        }else {
+            return null;
+        }
+    }
     @Override
     public PageResp<TrainQueryResp> queryList(TrainQueryReq req) {
 
