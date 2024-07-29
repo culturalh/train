@@ -40,6 +40,11 @@
           <user-outlined /> &nbsp; 火车座位
         </router-link>
       </a-menu-item>
+      <a-menu-item key="/batch/job">
+        <router-link to="/batch/job">
+          <user-outlined /> &nbsp; 任务管理
+        </router-link>
+      </a-menu-item>
 <!--      <a-menu-item key="/ticket">-->
 <!--        <router-link to="/ticket">-->
 <!--          <border-outer-outlined /> &nbsp; 余票查询-->
