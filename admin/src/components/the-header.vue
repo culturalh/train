@@ -21,37 +21,37 @@
         <router-link to="/about">
           <user-outlined /> &nbsp; 关于
         </router-link>
-      </a-menu-item>
-      <a-menu-item key="/station">
-        <router-link to="/station">
-          <user-outlined /> &nbsp; 车站管理
-        </router-link>
-      </a-menu-item>
-      <a-menu-item key="/train">
-        <router-link to="/train">
-          <user-outlined /> &nbsp; 火车管理
-        </router-link>
-      </a-menu-item>
-      <a-menu-item key="/train-station">
-        <router-link to="/train-station">
-          <user-outlined /> &nbsp; 火车车站
-        </router-link>
-      </a-menu-item>
-      <a-menu-item key="/train-carriage">
-        <router-link to="/train-carriage">
-          <user-outlined /> &nbsp; 火车车厢
-        </router-link>
-      </a-menu-item>
-      <a-menu-item key="/train-seat">
-        <router-link to="/train-seat">
-          <user-outlined /> &nbsp; 火车座位
-        </router-link>
-      </a-menu-item>
-      <a-menu-item key="/batch/job">
-        <router-link to="/batch/job">
-          <user-outlined /> &nbsp; 任务管理
-        </router-link>
-      </a-menu-item>
+<!--      </a-menu-item>-->
+<!--      <a-menu-item key="/station">-->
+<!--        <router-link to="/station">-->
+<!--          <user-outlined /> &nbsp; 车站管理-->
+<!--        </router-link>-->
+<!--      </a-menu-item>-->
+<!--      <a-menu-item key="/train">-->
+<!--        <router-link to="/train">-->
+<!--          <user-outlined /> &nbsp; 火车管理-->
+<!--        </router-link>-->
+<!--      </a-menu-item>-->
+<!--      <a-menu-item key="/train-station">-->
+<!--        <router-link to="/train-station">-->
+<!--          <user-outlined /> &nbsp; 火车车站-->
+<!--        </router-link>-->
+<!--      </a-menu-item>-->
+<!--      <a-menu-item key="/train-carriage">-->
+<!--        <router-link to="/train-carriage">-->
+<!--          <user-outlined /> &nbsp; 火车车厢-->
+<!--        </router-link>-->
+<!--      </a-menu-item>-->
+<!--      <a-menu-item key="/train-seat">-->
+<!--        <router-link to="/train-seat">-->
+<!--          <user-outlined /> &nbsp; 火车座位-->
+<!--        </router-link>-->
+<!--      </a-menu-item>-->
+<!--      <a-menu-item key="/batch/job">-->
+<!--        <router-link to="/batch/job">-->
+<!--          <user-outlined /> &nbsp; 任务管理-->
+<!--        </router-link>-->
+<!--      </a-menu-item>-->
 <!--      <a-menu-item key="/ticket">-->
 <!--        <router-link to="/ticket">-->
 <!--          <border-outer-outlined /> &nbsp; 余票查询-->
@@ -71,7 +71,7 @@
 <!--        <router-link to="/admin">-->
 <!--          <desktop-outlined /> &nbsp; 关于控台管理-->
 <!--        </router-link>-->
-<!--      </a-menu-item>-->
+      </a-menu-item>
     </a-menu>
   </a-layout-header>
 </template>
