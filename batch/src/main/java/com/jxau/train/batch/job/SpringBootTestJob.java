@@ -8,8 +8,8 @@ import org.springframework.stereotype.Component;
  * springboot自带的定时任务只适合单体应用，不适合集群应用
  * 没法实时更改任务状态和策略
  */
-@Component
-@EnableScheduling
+//@Component
+//@EnableScheduling
 public class SpringBootTestJob {
 
 
