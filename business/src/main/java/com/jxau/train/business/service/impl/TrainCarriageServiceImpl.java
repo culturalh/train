@@ -38,6 +38,8 @@ public class TrainCarriageServiceImpl implements TrainCarriageService {
     @Override
     public void save(TrainCarriageSaveReq req) {
         Date now = new Date();
+
+        //自动计算出列名和总座位数
         List<SeatColEnum> colsByType = SeatColEnum.getColsByType(req.getSeatType());
         req.setColCount(colsByType.size());
         req.setSeatCount(req.getRowCount() * req.getColCount());
