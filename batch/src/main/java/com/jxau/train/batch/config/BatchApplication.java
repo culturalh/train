@@ -1,4 +1,4 @@
-package com.jxau.batch.config;
+package com.jxau.train.batch.config;
 
 import org.mybatis.spring.annotation.MapperScan;
 import org.slf4j.Logger;

@@ -1,4 +1,4 @@
-package com.jxau.batch.job;
+package com.jxau.train.batch.job;
 
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 public class SpringBootTestJob {
 
 
-//    @Scheduled(cron = "0/5 * * * * ?")
+    @Scheduled(cron = "0/5 * * * * ?")
     public void test() {
         System.out.println("test springboot job");
     }
