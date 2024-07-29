@@ -26,7 +26,7 @@ public class ServerTest {
     public static void main(String[] args) throws Exception {
         //读取到pom.xml文件中的文件名
         String generatorPath = getGeneratorPath();
-        String module = generatorPath.replace("src/main/resources/generator-config-", "").replace(".xml", "");
+        module = generatorPath.replace("src/main/resources/generator-config-", "").replace(".xml", "");
         System.out.println("module:"+module);
         Document document = new SAXReader().read("generator/"+generatorPath);
         serverPath = serverPath.replace("[module]", module);
@@ -118,7 +118,7 @@ public class ServerTest {
         private static void genVue(String do_main, Map<String, Object> param) throws IOException, TemplateException {
         FreemarkerUtil.initConfig("vue.ftl");
         new File(vuePath + module).mkdirs();
-        String fileName = vuePath + module + "/" + do_main + ".vue";
+        String fileName = vuePath + module + "\\" + do_main + ".vue";
         System.out.println("开始生成：" + fileName);
         FreemarkerUtil.generator(fileName, param);
     }

@@ -12,6 +12,13 @@ import org.springframework.core.env.Environment;
 @ComponentScan("com.jxau")
 @MapperScan("com.jxau.train.business.mapper")
 public class BatchApplication {
+
+
+    /**
+     *     quartz在多节点上的执行默认是按轮询的方式执行的
+     */
+
+
     //创建日志对象
     private static final Logger LOG = LoggerFactory.getLogger(BatchApplication.class);
     public static void main(String[] args) {
