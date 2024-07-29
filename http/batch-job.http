@@ -1,0 +1,75 @@
+###
+POST http://localhost:8000/batch//admin/job/add
+Content-Type: application/json
+
+{
+ "name":"com.jxau.train.batch.job.TestQuartzJob",
+ "jobGroupName":"default",
+ "cronExpression":"0/5 * * * * ?",
+ "desc":"test job"
+}
+
+
+###
+POST http://localhost:8000/batch//admin/job/pause
+Content-Type: application/json
+
+{
+  "name":"com.jxau.train.batch.job.TestQuartzJob",
+  "jobGroupName":"default"
+
+}
+
+###
+POST http://localhost:8000/batch//admin/job/run
+Content-Type: application/json
+
+{
+"name":"com.jxau.train.batch.job.TestQuartzJob",
+"jobGroupName":"default"
+
+}
+
+###
+POST http://localhost:8000/batch//admin/job/delete
+Content-Type: application/json
+
+{
+  "name":"com.jxau.train.batch.job.TestQuartzJob",
+  "jobGroupName":"default"
+
+}
+
+###
+POST http://localhost:8000/batch//admin/job/resume
+Content-Type: application/json
+
+{
+  "name":"com.jxau.train.batch.job.TestQuartzJob",
+  "jobGroupName":"default"
+
+}
+
+
+
+###
+POST http://localhost:8000/batch//admin/job/reschedule
+Content-Type: application/json
+
+{
+  "name":"com.jxau.train.batch.job.TestQuartzJob",
+  "jobGroupName":"default",
+  "cronExpression":"0/6 * * * * ?",
+  "desc":"test job"
+}
+
+
+
+###
+GET http://localhost:8000/batch//admin/job/query
+Accept: application/json
+
+
+###
+GET http://localhost:8000/batch/hello
+Accept: application/json
