@@ -1,5 +1,6 @@
 package com.jxau.train.business.service;
 
+import com.jxau.train.business.domain.Train;
 import com.jxau.train.common.resp.PageResp;
 import com.jxau.train.business.req.TrainQueryReq;
 import com.jxau.train.business.req.TrainSaveReq;
@@ -19,4 +20,6 @@ public interface TrainService {
 
     //查询所有车次
     List<TrainQueryResp> queryAll();
+
+    List<Train> selectAll();
 }

@@ -100,10 +100,15 @@ public class TrainServiceImpl implements TrainService {
     @Override
     public List<TrainQueryResp> queryAll() {
         //mybatis条件查询类
+        List<Train> trainList = selectAll();
+        List<TrainQueryResp> trainQueryResp = BeanUtil.copyToList(trainList, TrainQueryResp.class);
+        return trainQueryResp;
+    }
+
+    public List<Train> selectAll() {
         TrainExample trainExample = new TrainExample();
         trainExample.setOrderByClause("code asc");
         List<Train> trainList = trainMapper.selectByExample(trainExample);
-        List<TrainQueryResp> trainQueryResp = BeanUtil.copyToList(trainList, TrainQueryResp.class);
-        return trainQueryResp;
+        return trainList;
     }
 }
