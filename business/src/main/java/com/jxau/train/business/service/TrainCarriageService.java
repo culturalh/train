@@ -6,6 +6,7 @@ import com.jxau.train.business.req.TrainCarriageQueryReq;
 import com.jxau.train.business.req.TrainCarriageSaveReq;
 import com.jxau.train.business.resp.TrainCarriageQueryResp;
 
+import java.util.Date;
 import java.util.List;
 
 public interface TrainCarriageService {
@@ -20,4 +21,6 @@ public interface TrainCarriageService {
 
     //根据车次查询
     List<TrainCarriage> selectByTrainCode(String trainCode);
+
+
 }

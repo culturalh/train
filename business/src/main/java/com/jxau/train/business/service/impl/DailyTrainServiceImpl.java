@@ -8,6 +8,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.jxau.train.business.domain.Train;
 import com.jxau.train.business.domain.TrainStationExample;
+import com.jxau.train.business.service.DailyTrainCarriageService;
 import com.jxau.train.business.service.DailyTrainStationService;
 import com.jxau.train.business.service.TrainService;
 import com.jxau.train.common.resp.PageResp;
@@ -41,6 +42,9 @@ public class DailyTrainServiceImpl implements DailyTrainService {
 
     @Resource
     private DailyTrainStationService dailyTrainStationService;
+
+    @Resource
+    private DailyTrainCarriageService dailyTrainCarriageService;
 
     @Override
     public void save(DailyTrainSaveReq req) {
@@ -130,6 +134,9 @@ public class DailyTrainServiceImpl implements DailyTrainService {
 
         //生成每日车站信息
         dailyTrainStationService.genDaily(date, train.getCode());
+
+        //生成每日车厢信息
+        dailyTrainCarriageService.genDaily(date, train.getCode());
     }
 
 
