@@ -7,7 +7,6 @@ import cn.hutool.core.util.ObjectUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.jxau.train.business.domain.Train;
-import com.jxau.train.business.domain.TrainStationExample;
 import com.jxau.train.business.service.*;
 import com.jxau.train.common.resp.PageResp;
 import com.jxau.train.common.util.SnowUtil;
@@ -22,6 +21,7 @@ import org.apache.juli.logging.Log;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
@@ -45,6 +45,10 @@ public class DailyTrainServiceImpl implements DailyTrainService {
 
     @Resource
     private DailyTrainSeatService dailyTrainSeatService;
+
+    @Resource
+    private DailyTrainTicketService dailyTrainTicketService;
+
     @Override
     public void save(DailyTrainSaveReq req) {
         Date now = new Date();
@@ -100,6 +104,7 @@ public class DailyTrainServiceImpl implements DailyTrainService {
         dailyTrainMapper.deleteByPrimaryKey(id);
     }
 
+    @Transactional
     @Override
     public void genDaily(Date date) {
         LOG.info("生成日期【{}】车次信息开始", DateUtil.formatDate(date));
@@ -116,6 +121,7 @@ public class DailyTrainServiceImpl implements DailyTrainService {
         LOG.info("生成日期【{}】车次信息结束", DateUtil.formatDate(date));
     }
 
+    @Transactional
     public void genDailyTrain(Date date, Train train) {
         Date now = new Date();
         //删除已有车次数据
@@ -131,14 +137,17 @@ public class DailyTrainServiceImpl implements DailyTrainService {
         dailyTrain.setDate(date);
         dailyTrainMapper.insert(dailyTrain);
 
-        //生成每日车站信息
+        //生成每日车站数据信息
         dailyTrainStationService.genDaily(date, train.getCode());
 
-        //生成每日车厢信息
+        //生成每日车厢数据信息
         dailyTrainCarriageService.genDaily(date, train.getCode());
 
-        //生成每日座位信息
+        //生成每日座位数据信息
         dailyTrainSeatService.genDaily(date, train.getCode());
+
+        //生成该车次余票数据信息
+        dailyTrainTicketService.genDaily(date, train.getCode());
     }
 
 

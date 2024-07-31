@@ -5,6 +5,8 @@ import com.jxau.train.business.req.DailyTrainTicketQueryReq;
 import com.jxau.train.business.req.DailyTrainTicketSaveReq;
 import com.jxau.train.business.resp.DailyTrainTicketQueryResp;
 
+import java.util.Date;
+
 public interface DailyTrainTicketService {
     //新增乘车人信息
     void save(DailyTrainTicketSaveReq req);
@@ -14,4 +16,7 @@ public interface DailyTrainTicketService {
 
     //根据会员id删除
     void delete(Long id);
+
+    //生成每日车次的所有余票信息
+    void genDaily(Date date, String trainCode);
 }
