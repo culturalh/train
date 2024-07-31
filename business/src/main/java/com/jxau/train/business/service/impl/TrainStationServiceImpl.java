@@ -114,4 +114,14 @@ public class TrainStationServiceImpl implements TrainStationService {
     public void delete(Long id) {
         trainStationMapper.deleteByPrimaryKey(id);
     }
+
+    @Override
+    public List<TrainStation> selectByTrainCode(String trainCode) {
+        TrainStationExample trainStationExample = new TrainStationExample();
+        trainStationExample.setOrderByClause("`index` asc");
+        TrainStationExample.Criteria criteria = trainStationExample.createCriteria();
+        criteria.andTrainCodeEqualTo(trainCode);
+        List<TrainStation> trainStationList = trainStationMapper.selectByExample(trainStationExample);
+        return trainStationList;
+    }
 }

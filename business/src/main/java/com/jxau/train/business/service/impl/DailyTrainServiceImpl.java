@@ -2,11 +2,13 @@ package com.jxau.train.business.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ObjectUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.jxau.train.business.domain.Train;
 import com.jxau.train.business.domain.TrainStationExample;
+import com.jxau.train.business.service.DailyTrainStationService;
 import com.jxau.train.business.service.TrainService;
 import com.jxau.train.common.resp.PageResp;
 import com.jxau.train.common.util.SnowUtil;
@@ -36,6 +38,9 @@ public class DailyTrainServiceImpl implements DailyTrainService {
 
     @Resource
     private TrainService trainService;
+
+    @Resource
+    private DailyTrainStationService dailyTrainStationService;
 
     @Override
     public void save(DailyTrainSaveReq req) {
@@ -94,7 +99,7 @@ public class DailyTrainServiceImpl implements DailyTrainService {
 
     @Override
     public void genDaily(Date date) {
-
+        LOG.info("生成日期【{}】车次信息开始", DateUtil.formatDate(date));
         //查询当前车次的信息
         List<Train> trains = trainService.selectAll();
 
@@ -105,7 +110,7 @@ public class DailyTrainServiceImpl implements DailyTrainService {
         for (Train train : trains) {
             genDailyTrain(date, train);
         }
-
+        LOG.info("生成日期【{}】车次信息结束", DateUtil.formatDate(date));
     }
 
     public void genDailyTrain(Date date, Train train) {
@@ -123,6 +128,8 @@ public class DailyTrainServiceImpl implements DailyTrainService {
         dailyTrain.setDate(date);
         dailyTrainMapper.insert(dailyTrain);
 
+        //生成每日车站信息
+        dailyTrainStationService.genDaily(date, train.getCode());
     }
 
 
