@@ -6,6 +6,7 @@ import cn.hutool.core.util.StrUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.jxau.train.business.domain.TrainCarriage;
+import com.jxau.train.business.domain.TrainCarriageExample;
 import com.jxau.train.business.enums.SeatColEnum;
 import com.jxau.train.business.enums.SeatTypeEnum;
 import com.jxau.train.business.service.TrainCarriageService;
@@ -130,7 +131,13 @@ public class TrainSeatServiceImpl implements TrainSeatService {
                 }
             }
         }
-
-
+    }
+    @Override
+    public List<TrainSeat> selectByTrainCode(String trainCode){
+        TrainSeatExample trainSeatExample = new TrainSeatExample();
+        trainSeatExample.setOrderByClause("`id` asc");
+        TrainSeatExample.Criteria criteria = trainSeatExample.createCriteria();
+        criteria.andTrainCodeEqualTo(trainCode);
+        return trainSeatMapper.selectByExample(trainSeatExample);
     }
 }

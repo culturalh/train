@@ -5,6 +5,8 @@ import com.jxau.train.business.req.DailyTrainSeatQueryReq;
 import com.jxau.train.business.req.DailyTrainSeatSaveReq;
 import com.jxau.train.business.resp.DailyTrainSeatQueryResp;
 
+import java.util.Date;
+
 public interface DailyTrainSeatService {
     //新增乘车人信息
     void save(DailyTrainSeatSaveReq req);
@@ -14,4 +16,7 @@ public interface DailyTrainSeatService {
 
     //根据会员id删除
     void delete(Long id);
+
+    //生成某日某车次的座位信息
+    void genDaily(Date date, String trainCode);
 }

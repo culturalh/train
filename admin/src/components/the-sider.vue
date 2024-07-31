@@ -2,7 +2,7 @@
   <a-layout-sider width="200" style="background: #fff">
     <a-menu
         v-model:selectedKeys="selectedKeys"
-        :openKeys="['base','batch']"
+        :openKeys="['base','batch','business']"
         mode="inline"
         :style="{ height: '100%', borderRight: 0 }"
     >
@@ -20,9 +20,14 @@
         <template #title>
           <span>
             <UnorderedListOutlined />
-            基础数据
+            业务管理
           </span>
         </template>
+        <a-menu-item key="/business/daily-train-ticket">
+          <router-link to="/business/daily-train-ticket">
+            <user-outlined /> &nbsp;余票查询
+          </router-link>
+        </a-menu-item>
         <a-menu-item key="/business/daily-train">
           <router-link to="/business/daily-train">
             <user-outlined /> &nbsp;每日车次

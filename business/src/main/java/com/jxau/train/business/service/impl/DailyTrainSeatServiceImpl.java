@@ -1,13 +1,16 @@
 package com.jxau.train.business.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.StrUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.jxau.train.business.domain.*;
+import com.jxau.train.business.service.TrainSeatService;
+import com.jxau.train.business.service.TrainStationService;
 import com.jxau.train.common.resp.PageResp;
 import com.jxau.train.common.util.SnowUtil;
-import com.jxau.train.business.domain.DailyTrainSeat;
-import com.jxau.train.business.domain.DailyTrainSeatExample;
 import com.jxau.train.business.mapper.DailyTrainSeatMapper;
 import com.jxau.train.business.req.DailyTrainSeatQueryReq;
 import com.jxau.train.business.req.DailyTrainSeatSaveReq;
@@ -29,6 +32,11 @@ public class DailyTrainSeatServiceImpl implements DailyTrainSeatService {
     @Resource
     private DailyTrainSeatMapper dailyTrainSeatMapper;
 
+    @Resource
+    private TrainSeatService trainSeatService;
+
+    @Resource
+    private TrainStationService trainStationService;
     @Override
     public void save(DailyTrainSeatSaveReq req) {
         Date now = new Date();
@@ -50,7 +58,7 @@ public class DailyTrainSeatServiceImpl implements DailyTrainSeatService {
 
         //mybatis条件查询类
         DailyTrainSeatExample dailyTrainSeatExample = new DailyTrainSeatExample();
-        dailyTrainSeatExample.setOrderByClause("train_code desc,carriage_index asc,carriage_seat_index asc");
+        dailyTrainSeatExample.setOrderByClause("date desc,train_code desc,carriage_index asc,carriage_seat_index asc");
         //创建条件
         DailyTrainSeatExample.Criteria criteria = dailyTrainSeatExample.createCriteria();
         //创建条件
@@ -77,5 +85,38 @@ public class DailyTrainSeatServiceImpl implements DailyTrainSeatService {
     @Override
     public void delete(Long id) {
         dailyTrainSeatMapper.deleteByPrimaryKey(id);
+    }
+
+    @Override
+    public void genDaily(Date date, String trainCode) {
+        LOG.info("生成日期【{}】车次【{}】的座位信息开始", DateUtil.formatDate(date), trainCode);
+        Date now = new Date();
+        //删除已有车次数据
+        DailyTrainSeatExample dailyTrainSeatExample = new DailyTrainSeatExample();
+        dailyTrainSeatExample.createCriteria().andDateEqualTo(date).andTrainCodeEqualTo(trainCode);
+        dailyTrainSeatMapper.deleteByExample(dailyTrainSeatExample);
+        //先查询所有车次的信息
+        List<TrainSeat> trainSeatList = trainSeatService.selectByTrainCode(trainCode);
+
+        if (ObjectUtil.isEmpty(trainSeatList)) {
+            LOG.info("该车次没有座位基础数据，生成该车次的座位信息结束");
+            return;
+        }
+
+        //座位售卖情况
+        List<TrainStation> trainStationList = trainStationService.selectByTrainCode(trainCode);
+        String sell = StrUtil.fillBefore("", '0',trainStationList.size()-1);
+
+        //生成改车次已有的数据
+        for (TrainSeat trainSeat : trainSeatList) {
+            DailyTrainSeat dailyTrainSeat = BeanUtil.copyProperties(trainSeat, DailyTrainSeat.class);
+            dailyTrainSeat.setId(SnowUtil.getSnowFlakeId());
+            dailyTrainSeat.setCreateTime(now);
+            dailyTrainSeat.setUpdateTime(now);
+            dailyTrainSeat.setDate(date);
+            dailyTrainSeat.setSell(sell);
+            dailyTrainSeatMapper.insert(dailyTrainSeat);
+        }
+        LOG.info("生成日期【{}】车次【{}】的座位站信息结束", DateUtil.formatDate(date), trainCode);
     }
 }

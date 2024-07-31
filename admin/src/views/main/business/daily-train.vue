@@ -307,11 +307,11 @@ export default defineComponent({
       onDelete,
       onChangeCode,
       params,
-      // genDaily,
-      // genDailyVisible,
-      // handleGenDailyOk,
-      // onClickGenDaily,
-      // genDailyLoading
+      genDaily,
+      genDailyVisible,
+      handleGenDailyOk,
+      onClickGenDaily,
+      genDailyLoading
     };
   },
 });

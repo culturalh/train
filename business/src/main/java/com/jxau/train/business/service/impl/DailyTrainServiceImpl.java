@@ -8,9 +8,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.jxau.train.business.domain.Train;
 import com.jxau.train.business.domain.TrainStationExample;
-import com.jxau.train.business.service.DailyTrainCarriageService;
-import com.jxau.train.business.service.DailyTrainStationService;
-import com.jxau.train.business.service.TrainService;
+import com.jxau.train.business.service.*;
 import com.jxau.train.common.resp.PageResp;
 import com.jxau.train.common.util.SnowUtil;
 import com.jxau.train.business.domain.DailyTrain;
@@ -19,7 +17,6 @@ import com.jxau.train.business.mapper.DailyTrainMapper;
 import com.jxau.train.business.req.DailyTrainQueryReq;
 import com.jxau.train.business.req.DailyTrainSaveReq;
 import com.jxau.train.business.resp.DailyTrainQueryResp;
-import com.jxau.train.business.service.DailyTrainService;
 import jakarta.annotation.Resource;
 import org.apache.juli.logging.Log;
 import org.slf4j.Logger;
@@ -46,6 +43,8 @@ public class DailyTrainServiceImpl implements DailyTrainService {
     @Resource
     private DailyTrainCarriageService dailyTrainCarriageService;
 
+    @Resource
+    private DailyTrainSeatService dailyTrainSeatService;
     @Override
     public void save(DailyTrainSaveReq req) {
         Date now = new Date();
@@ -137,6 +136,9 @@ public class DailyTrainServiceImpl implements DailyTrainService {
 
         //生成每日车厢信息
         dailyTrainCarriageService.genDaily(date, train.getCode());
+
+        //生成每日座位信息
+        dailyTrainSeatService.genDaily(date, train.getCode());
     }
 
 
