@@ -78,4 +78,14 @@ public class PassengerServiceImpl implements PassengerService {
     public void delete(Long id) {
         passengerMapper.deleteByPrimaryKey(id);
     }
+
+    @Override
+    public List<PassengerQueryResp> queryMine(Long id) {
+        PassengerExample passengerExample = new PassengerExample();
+        passengerExample.setOrderByClause("name desc");
+        PassengerExample.Criteria criteria = passengerExample.createCriteria();
+        criteria.andMemberIdEqualTo(LoginMemberContext.getId());
+        List<Passenger> passengerList = passengerMapper.selectByExample(passengerExample);
+        return BeanUtil.copyToList(passengerList, PassengerQueryResp.class);
+    }
 }

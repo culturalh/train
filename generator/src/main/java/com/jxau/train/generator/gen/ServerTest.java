@@ -16,6 +16,7 @@ import java.util.*;
 
 public class ServerTest {
     static boolean readOnly = true;
+//    static String vuePath = "web/src/views/main/";
     static String vuePath = "admin/src/views/main/";
     static String serverPath = "[module]/src/main/java/com/jxau/train/[module]/";
     static String pomPath = "generator/pom.xml";
