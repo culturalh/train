@@ -1,6 +1,7 @@
 package com.jxau.train.business.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.EnumUtil;
 import cn.hutool.core.util.ObjectUtil;
@@ -171,5 +172,23 @@ public class DailyTrainTicketServiceImpl implements DailyTrainTicketService {
 
 
         LOG.info("生成日期【{}】车次【{}】的余票信息结束", DateUtil.formatDate(date), trainCode);
+    }
+
+
+    @Override
+    public DailyTrainTicket selectByUnique(Date date,String trainCode, String start,String end) {
+        DailyTrainTicketExample dailyTrainTicketExample = new DailyTrainTicketExample();
+        DailyTrainTicketExample.Criteria criteria = dailyTrainTicketExample.createCriteria();
+        criteria.andTrainCodeEqualTo(trainCode)
+                .andDateEqualTo(date)
+                .andTrainCodeEqualTo(trainCode)
+                .andStartEqualTo(start)
+                .andEndEqualTo(end);
+        List<DailyTrainTicket> dailyTrainTickets = dailyTrainTicketMapper.selectByExample(dailyTrainTicketExample);
+        if(CollUtil.isNotEmpty(dailyTrainTickets)){
+            return dailyTrainTickets.get(0);
+        }else {
+            return null;
+        }
     }
 }

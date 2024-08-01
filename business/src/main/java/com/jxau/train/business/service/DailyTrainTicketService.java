@@ -1,6 +1,7 @@
 package com.jxau.train.business.service;
 
 import com.jxau.train.business.domain.DailyTrain;
+import com.jxau.train.business.domain.DailyTrainTicket;
 import com.jxau.train.common.resp.PageResp;
 import com.jxau.train.business.req.DailyTrainTicketQueryReq;
 import com.jxau.train.business.req.DailyTrainTicketSaveReq;
@@ -20,4 +21,7 @@ public interface DailyTrainTicketService {
 
     //生成每日车次的所有余票信息
     void genDaily(DailyTrain dailyTrain, Date date, String trainCode);
+
+    //根据车次和日期查询余票信息
+    DailyTrainTicket selectByUnique(Date date, String trainCode, String start, String end);
 }
