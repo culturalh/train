@@ -3,11 +3,13 @@ package com.jxau.train.business.service.impl;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.EnumUtil;
 import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.jxau.train.business.domain.DailyTrainTicket;
 import com.jxau.train.business.enums.ConfirmOrderStatusEnum;
+import com.jxau.train.business.enums.SeatColEnum;
 import com.jxau.train.business.enums.SeatTypeEnum;
 import com.jxau.train.business.req.ConfirmOrderTicketReq;
 import com.jxau.train.business.service.DailyTrainTicketService;
@@ -28,6 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -96,6 +99,7 @@ public class ConfirmOrderServiceImpl implements ConfirmOrderService {
         String trainCode = req.getTrainCode();
         String start = req.getStart();
         String end = req.getEnd();
+        List<ConfirmOrderTicketReq> tickets = req.getTickets();
         //保存确认订单表，状态初始
         Date now = new Date();
         ConfirmOrder confirmOrder = new ConfirmOrder();
@@ -111,7 +115,8 @@ public class ConfirmOrderServiceImpl implements ConfirmOrderService {
         confirmOrder.setStatus(ConfirmOrderStatusEnum.INIT.getCode());
         confirmOrder.setCreateTime(now);
         confirmOrder.setUpdateTime(now);
-        confirmOrder.setTickets(JSON.toJSONString(req.getTickets()));
+
+        confirmOrder.setTickets(JSON.toJSONString(tickets));
 
         confirmOrderMapper.insert(confirmOrder);
         //查出余票记录，需要得到真实的库存
@@ -119,7 +124,42 @@ public class ConfirmOrderServiceImpl implements ConfirmOrderService {
         LOG.info("查出余票记录：{}", dailyTrainTicket);
         //预扣减余票数量，并判断余票是否充足
         reduceTickets(req, dailyTrainTicket);
+
+        //判断是否有选座
+        ConfirmOrderTicketReq ticket0= tickets.get(0);
+        if(StrUtil.isNotBlank(ticket0.getSeat())){
+            LOG.info("本次购票有选座");
+            //本次座位类型包含的列
+            List<SeatColEnum> colEnumList = SeatColEnum.getColsByType(ticket0.getSeatTypeCode());
+            LOG.info("本次座位类型包含的列：{}", colEnumList);
+            //组成两排列表 {A1,C1,D1,F1,A2,C2,D2,F2}
+            List<String> referSeatList = new ArrayList<>();
+            for (int i = 1; i <= 2; i++) {
+                for (SeatColEnum seatColEnum:colEnumList) {
+                    referSeatList.add(seatColEnum.getCode() + i);
+                }
+            }
+            LOG.info("用于做参照的两排座位：{}", referSeatList);
+
+            List<Integer> offSeatList = new ArrayList<>();
+            List<Integer> absoluteSeatList = new ArrayList<>();
+            for (ConfirmOrderTicketReq ticket:tickets) {
+                int index = referSeatList.indexOf(ticket.getSeat());
+                absoluteSeatList.add(index);
+            }
+            LOG.info("计算得到两排座位的绝对偏移值：{}", absoluteSeatList);
+            for ( Integer index : absoluteSeatList){
+                int offset = index - absoluteSeatList.get(0);
+                offSeatList.add(offset);
+            }
+            LOG.info("计算得到两排座位的相对第一个座位偏移值：{}", offSeatList);
+        }else {
+            LOG.info("本次购票无选座");
+        }
         //选座
+        //计算相对第一个座位的偏移值
+        //比如选择的是C1，D2(则偏移值是[0,5])
+        //比如选择的是A1,B1,C1(则偏移值是[0,1,2])
 
         //一个车厢的一个车厢的获取座位数据
 
