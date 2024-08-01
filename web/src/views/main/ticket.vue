@@ -1,7 +1,7 @@
 <template>
   <p>
     <a-space>
-      <train-select-view v-model="params.trainCode" width="200px"></train-select-view>
+<!--      <train-select-view v-model="params.trainCode" width="200px"></train-select-view>-->
       <a-date-picker v-model:value="params.date" valueFormat="YYYY-MM-DD" placeholder="请选择日期"></a-date-picker>
       <station-select-view v-model="params.start" width="200px"></station-select-view>
       <station-select-view v-model="params.end" width="200px"></station-select-view>
@@ -119,11 +119,11 @@ export default defineComponent({
     let loading = ref(false);
     const params = ref({});
     const columns = [
-    {
-      title: '日期',
-      dataIndex: 'date',
-      key: 'date',
-    },
+    // {
+    //   title: '日期',
+    //   dataIndex: 'date',
+    //   key: 'date',
+    // },
     {
       title: '车次编号',
       dataIndex: 'trainCode',
@@ -225,6 +225,18 @@ export default defineComponent({
 
 
     const handleQuery = (param) => {
+      if(Tool.isEmpty(params.value.date)){
+        notification.error({description: "请输入日期"});
+        return;
+      }
+      if(Tool.isEmpty(params.value.start)){
+        notification.error({description: "请输入出发站"});
+        return;
+      }
+      if(Tool.isEmpty(params.value.end)){
+        notification.error({description: "请输入到达站"});
+        return;
+      }
       if (!param) {
         param = {
           page: 1,
@@ -270,10 +282,10 @@ export default defineComponent({
     };
 
     onMounted(() => {
-      handleQuery({
-        page: 1,
-        size: pagination.value.pageSize
-      });
+      // handleQuery({
+      //   page: 1,
+      //   size: pagination.value.pageSize
+      // });
     });
 
     return {
