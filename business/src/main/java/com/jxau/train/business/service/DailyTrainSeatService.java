@@ -19,4 +19,7 @@ public interface DailyTrainSeatService {
 
     //生成某日某车次的座位信息
     void genDaily(Date date, String trainCode);
+
+    //查询某日某车次的某种座位的数量信息
+    int countSeat(Date date,String trainCode,String seatType);
 }

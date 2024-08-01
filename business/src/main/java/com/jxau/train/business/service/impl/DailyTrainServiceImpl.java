@@ -147,7 +147,7 @@ public class DailyTrainServiceImpl implements DailyTrainService {
         dailyTrainSeatService.genDaily(date, train.getCode());
 
         //生成该车次余票数据信息
-        dailyTrainTicketService.genDaily(date, train.getCode());
+        dailyTrainTicketService.genDaily(dailyTrain,date, train.getCode());
     }
 
 

@@ -121,4 +121,16 @@ public class DailyTrainSeatServiceImpl implements DailyTrainSeatService {
         }
         LOG.info("生成日期【{}】车次【{}】的座位站信息结束", DateUtil.formatDate(date), trainCode);
     }
+
+    @Override
+    public int countSeat(Date date,String trainCode,String seatType){
+        DailyTrainSeatExample dailyTrainSeatExample = new DailyTrainSeatExample();
+        dailyTrainSeatExample.createCriteria().andDateEqualTo(date).andTrainCodeEqualTo(trainCode).andSeatTypeEqualTo(seatType);
+        long count= dailyTrainSeatMapper.countByExample(dailyTrainSeatExample);
+        if (count==0){
+            return -1;
+        }
+        return (int) count;
+    }
+
 }
