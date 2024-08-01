@@ -67,6 +67,22 @@ public class DailyTrainTicketServiceImpl implements DailyTrainTicketService {
         //创建条件
         DailyTrainTicketExample.Criteria criteria = dailyTrainTicketExample.createCriteria();
 
+        //创建条件
+        if (ObjectUtil.isNotNull(req.getDate())) {
+            criteria.andDateEqualTo(req.getDate());
+        }
+        //创建条件
+        if (ObjectUtil.isNotEmpty(req.getTrainCode())) {
+            criteria.andTrainCodeEqualTo(req.getTrainCode());
+        }
+        //创建条件
+        if (ObjectUtil.isNotEmpty(req.getStart())) {
+            criteria.andStartEqualTo(req.getStart());
+        }
+        //创建条件
+        if (ObjectUtil.isNotEmpty(req.getEnd())) {
+            criteria.andEndEqualTo(req.getEnd());
+        }
 
         //开始分页
         PageHelper.startPage(req.getPage(),req.getSize());
