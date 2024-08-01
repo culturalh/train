@@ -1,6 +1,8 @@
 <template>
   <a-layout-header class="header"  >
-    <router-link to="/welcome">小木子12306控制台</router-link>
+    <div class="logo">
+      <router-link to="/welcome">小木子12306控制台</router-link>
+    </div>
     <div style="float: right; color: white" >
       您好:{{member.mobile}} &nbsp;&nbsp;
       <router-link to="/login" style="color: white">退出登录</router-link>
