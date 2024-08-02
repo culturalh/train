@@ -14,9 +14,7 @@ import com.jxau.train.business.enums.ConfirmOrderStatusEnum;
 import com.jxau.train.business.enums.SeatColEnum;
 import com.jxau.train.business.enums.SeatTypeEnum;
 import com.jxau.train.business.req.ConfirmOrderTicketReq;
-import com.jxau.train.business.service.DailyTrainCarriageService;
-import com.jxau.train.business.service.DailyTrainSeatService;
-import com.jxau.train.business.service.DailyTrainTicketService;
+import com.jxau.train.business.service.*;
 import com.jxau.train.common.context.LoginMemberContext;
 import com.jxau.train.common.exception.BusinessException;
 import com.jxau.train.common.exception.BusinessExceptionEnum;
@@ -26,7 +24,6 @@ import com.jxau.train.business.mapper.ConfirmOrderMapper;
 import com.jxau.train.business.req.ConfirmOrderQueryReq;
 import com.jxau.train.business.req.ConfirmOrderDoReq;
 import com.jxau.train.business.resp.ConfirmOrderQueryResp;
-import com.jxau.train.business.service.ConfirmOrderService;
 import jakarta.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,6 +49,9 @@ public class ConfirmOrderServiceImpl implements ConfirmOrderService {
 
     @Resource
     private DailyTrainSeatService dailyTrainSeatService;
+
+    @Resource
+    private AfterConfirmOrderService afterConfirmOrderService;
 
 
     @Override
@@ -182,19 +182,19 @@ public class ConfirmOrderServiceImpl implements ConfirmOrderService {
 
 
         LOG.info("最终选择的座位：{}", finalSeatList);
-        //一个车厢的一个车厢的获取座位数据
-
-        //挑选符合条件的座位，如果这个车厢不满足，则进入下个车厢（多个座位应该安排在同一个车厢）
 
         //选中座位后事务处理
+            //座位表的修改售卖情况sell:
+        afterConfirmOrderService.afterDoConfirm(dailyTrainTicket,finalSeatList);
+            //余票详情表修改余票
 
-        //座位表的修改售卖情况sell:
+            //为会员增加购票记录
 
-        //余票详情表修改余票
+            //更新确认订单成功
 
-        //为会员增加购票记录
 
-        //更新确认订单成功
+
+
     }
 
     /**
@@ -241,6 +241,7 @@ public class ConfirmOrderServiceImpl implements ConfirmOrderService {
         List<DailyTrainCarriage> trainCarriageList = dailyTrainCarriageService.selectBySeatType(date, trainCode, seatType);
         List<DailyTrainSeat> getSeatList = new ArrayList<>();
         LOG.info("共查出{}个符合条件的车厢", trainCarriageList.size());
+        //挑选符合条件的座位，如果这个车厢不满足，则进入下个车厢（多个座位应该安排在同一个车厢）
         //一个车厢的一个车厢的获取座位数据
         for (DailyTrainCarriage dailyTrainCarriage : trainCarriageList) {
 
