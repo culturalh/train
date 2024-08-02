@@ -5,12 +5,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.env.Environment;
 
 @SpringBootApplication
 @ComponentScan("com.jxau")
 @MapperScan("com.jxau.train.business.mapper")
+@EnableFeignClients("com.jxau.train.business.feign")
 public class BusinessApplication {
     //创建日志对象
     private static final Logger LOG = LoggerFactory.getLogger(BusinessApplication.class);

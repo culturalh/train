@@ -35,6 +35,17 @@
             <scope>test</scope>
         </dependency>
 
+        <!--    远程调用openFeign    -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-openfeign</artifactId>
+        </dependency>
+
+        <!--    远程调用openFeign默认使用的loadbalancer负载均衡器    -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-loadbalancer</artifactId>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
