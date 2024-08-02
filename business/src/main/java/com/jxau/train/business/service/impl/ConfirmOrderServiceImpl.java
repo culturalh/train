@@ -2,6 +2,7 @@ package com.jxau.train.business.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.EnumUtil;
+import cn.hutool.core.util.NumberUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSON;
@@ -165,13 +166,14 @@ public class ConfirmOrderServiceImpl implements ConfirmOrderService {
             }
             LOG.info("计算得到两排座位的相对第一个座位偏移值：{}", offSeatList);
             
-            getSeat(date,trainCode,ticket0.getSeatTypeCode(),ticket0.getSeat(),offSeatList);
+            getSeat(date,trainCode,ticket0.getSeatTypeCode(),ticket0.getSeat(),offSeatList,dailyTrainTicket.getStartIndex(),dailyTrainTicket.getEndIndex());
             
             
         }else {
             LOG.info("本次购票无选座");
             for (ConfirmOrderTicketReq confirmOrderTicketReq : tickets) {
-                getSeat(date,trainCode,confirmOrderTicketReq.getSeatTypeCode(),null,null);
+                getSeat(date,trainCode,confirmOrderTicketReq.getSeatTypeCode(),null,null,dailyTrainTicket.getStartIndex(),dailyTrainTicket.getEndIndex());
+
             }
         }
 
@@ -190,9 +192,47 @@ public class ConfirmOrderServiceImpl implements ConfirmOrderService {
         //更新确认订单成功
     }
 
+    /**
+     * 计算某座位在区间内是否可卖
+     * 例：sell= 10001 本次购买区间站1~4，则区间以售卖000
+     * 全部是0，标识整个区间可买：只要有1，就表示区间内已售卖过票
+     *
+     * 选中后，要计算购票后的sell，比如原来是10001，本次购买区间站1~4
+     * 方案：构造本次购票造成的售卖信息01110，和原sell 10001按位或，最终得到11111
+     * @param dailyTrainSeat
+     * @param startIndex
+     * @param endIndex
+     */
+    private Boolean calSell(DailyTrainSeat dailyTrainSeat,Integer startIndex,Integer endIndex){
+        String sell = dailyTrainSeat.getSell();
+        String sellPart = sell.substring(startIndex, endIndex);
+        if (Integer.parseInt(sellPart) > 0){
+            LOG.info("座位{}在本车站区间{}~{}已被售卖", dailyTrainSeat.getCarriageSeatIndex(), startIndex, endIndex);
+            return false;
+        }else{
+            LOG.info("座位{}在本车站区间{}~{}可以售卖", dailyTrainSeat.getCarriageSeatIndex(), startIndex, endIndex);
+            String curSell = sellPart.replace("0", "1");
+            curSell = StrUtil.fillBefore(curSell, '0', endIndex);
+            curSell = StrUtil.fillAfter(curSell, '0', sell.length());
+            //当前售票信息与库里的售票信息进行按位或，获取新的售票信息
+            int newSellInt = NumberUtil.binaryToInt(curSell) | Integer.parseInt(sellPart);
+            String newSell = NumberUtil.getBinaryStr(newSellInt);
+            StrUtil.fillBefore(newSell, '0', sell.length());
+            LOG.info("座位{}被选中，原售票信息{}，本车站区间{}~{}，即{} ，最终售票信息：{}", dailyTrainSeat.getCarriageSeatIndex(), sell,startIndex, endIndex,curSell, newSell);
+            dailyTrainSeat.setSell(newSell);
+            return true;
+        }
+    }
 
-
-    private void getSeat(Date date,String trainCode,String seatType,String column, List<Integer> offSeatList){
+    /**
+     * 如果有选座则一次性选完，否则一个一个选
+     * @param date
+     * @param trainCode
+     * @param seatType
+     * @param column
+     * @param offSeatList
+     */
+    private void getSeat(Date date,String trainCode,String seatType,String column, List<Integer> offSeatList,Integer startIndex,Integer endIndex){
         List<DailyTrainCarriage> trainCarriageList = dailyTrainCarriageService.selectBySeatType(date, trainCode, seatType);
         LOG.info("共查出{}个符合条件的车厢", trainCarriageList.size());
         //一个车厢的一个车厢的获取座位数据
@@ -202,6 +242,15 @@ public class ConfirmOrderServiceImpl implements ConfirmOrderService {
             LOG.info("车厢{}共查出{}个座位", dailyTrainCarriage.getIndex(), seatList.size());
             //遍历座位
          LOG.info("车厢{}座位数：{}", dailyTrainCarriage.getIndex(), seatList.size());
+            for (DailyTrainSeat dailyTrainSeat : seatList) {
+                Boolean isChoose = calSell(dailyTrainSeat, startIndex, endIndex);
+                if(isChoose){
+                    LOG.info("选中座位");
+                } else {
+//                    LOG.info("未选中座位");
+//                    continue;
+                }
+            }
         }
     }
     private void reduceTickets(ConfirmOrderDoReq req, DailyTrainTicket dailyTrainTicket) {
