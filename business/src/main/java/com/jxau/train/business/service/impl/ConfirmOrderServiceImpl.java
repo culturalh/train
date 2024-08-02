@@ -7,19 +7,19 @@ import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.jxau.train.business.domain.DailyTrainTicket;
+import com.jxau.train.business.domain.*;
 import com.jxau.train.business.enums.ConfirmOrderStatusEnum;
 import com.jxau.train.business.enums.SeatColEnum;
 import com.jxau.train.business.enums.SeatTypeEnum;
 import com.jxau.train.business.req.ConfirmOrderTicketReq;
+import com.jxau.train.business.service.DailyTrainCarriageService;
+import com.jxau.train.business.service.DailyTrainSeatService;
 import com.jxau.train.business.service.DailyTrainTicketService;
 import com.jxau.train.common.context.LoginMemberContext;
 import com.jxau.train.common.exception.BusinessException;
 import com.jxau.train.common.exception.BusinessExceptionEnum;
 import com.jxau.train.common.resp.PageResp;
 import com.jxau.train.common.util.SnowUtil;
-import com.jxau.train.business.domain.ConfirmOrder;
-import com.jxau.train.business.domain.ConfirmOrderExample;
 import com.jxau.train.business.mapper.ConfirmOrderMapper;
 import com.jxau.train.business.req.ConfirmOrderQueryReq;
 import com.jxau.train.business.req.ConfirmOrderDoReq;
@@ -44,6 +44,13 @@ public class ConfirmOrderServiceImpl implements ConfirmOrderService {
 
     @Resource
     private DailyTrainTicketService dailyTrainTicketService;
+
+    @Resource
+    private DailyTrainCarriageService dailyTrainCarriageService;
+
+    @Resource
+    private DailyTrainSeatService dailyTrainSeatService;
+
 
     @Override
     public void save(ConfirmOrderDoReq req) {
@@ -131,6 +138,10 @@ public class ConfirmOrderServiceImpl implements ConfirmOrderService {
             LOG.info("本次购票有选座");
             //本次座位类型包含的列
             List<SeatColEnum> colEnumList = SeatColEnum.getColsByType(ticket0.getSeatTypeCode());
+            //选座
+            //计算相对第一个座位的偏移值
+            //比如选择的是C1，D2(则偏移值是[0,5])
+            //比如选择的是A1,B1,C1(则偏移值是[0,1,2])
             LOG.info("本次座位类型包含的列：{}", colEnumList);
             //组成两排列表 {A1,C1,D1,F1,A2,C2,D2,F2}
             List<String> referSeatList = new ArrayList<>();
@@ -153,13 +164,16 @@ public class ConfirmOrderServiceImpl implements ConfirmOrderService {
                 offSeatList.add(offset);
             }
             LOG.info("计算得到两排座位的相对第一个座位偏移值：{}", offSeatList);
+            
+            getSeat(date,trainCode,ticket0.getSeatTypeCode(),ticket0.getSeat(),offSeatList);
+            
+            
         }else {
             LOG.info("本次购票无选座");
+            for (ConfirmOrderTicketReq confirmOrderTicketReq : tickets) {
+                getSeat(date,trainCode,confirmOrderTicketReq.getSeatTypeCode(),null,null);
+            }
         }
-        //选座
-        //计算相对第一个座位的偏移值
-        //比如选择的是C1，D2(则偏移值是[0,5])
-        //比如选择的是A1,B1,C1(则偏移值是[0,1,2])
 
         //一个车厢的一个车厢的获取座位数据
 
@@ -176,6 +190,20 @@ public class ConfirmOrderServiceImpl implements ConfirmOrderService {
         //更新确认订单成功
     }
 
+
+
+    private void getSeat(Date date,String trainCode,String seatType,String column, List<Integer> offSeatList){
+        List<DailyTrainCarriage> trainCarriageList = dailyTrainCarriageService.selectBySeatType(date, trainCode, seatType);
+        LOG.info("共查出{}个符合条件的车厢", trainCarriageList.size());
+        //一个车厢的一个车厢的获取座位数据
+        for (DailyTrainCarriage dailyTrainCarriage : trainCarriageList) {
+            //查出车厢所有座位
+            List<DailyTrainSeat> seatList = dailyTrainSeatService.selectByCarriage(date, trainCode, dailyTrainCarriage.getIndex());
+            LOG.info("车厢{}共查出{}个座位", dailyTrainCarriage.getIndex(), seatList.size());
+            //遍历座位
+         LOG.info("车厢{}座位数：{}", dailyTrainCarriage.getIndex(), seatList.size());
+        }
+    }
     private void reduceTickets(ConfirmOrderDoReq req, DailyTrainTicket dailyTrainTicket) {
         for (ConfirmOrderTicketReq ticketReq : req.getTickets()) {
             String seatTypeCode = ticketReq.getSeatTypeCode();
