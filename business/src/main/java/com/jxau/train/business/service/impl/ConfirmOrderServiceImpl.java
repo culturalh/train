@@ -1,6 +1,7 @@
 package com.jxau.train.business.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.EnumUtil;
 import cn.hutool.core.util.NumberUtil;
 import cn.hutool.core.util.ObjectUtil;
@@ -242,14 +243,63 @@ public class ConfirmOrderServiceImpl implements ConfirmOrderService {
             LOG.info("车厢{}共查出{}个座位", dailyTrainCarriage.getIndex(), seatList.size());
             //遍历座位
          LOG.info("车厢{}座位数：{}", dailyTrainCarriage.getIndex(), seatList.size());
-            for (DailyTrainSeat dailyTrainSeat : seatList) {
+            for (int i = 0, seatListSize = seatList.size(); i < seatListSize; i++) {
+                DailyTrainSeat dailyTrainSeat = seatList.get(i);
+                String col = dailyTrainSeat.getCol();
+                Integer seatIndex = dailyTrainSeat.getCarriageSeatIndex();
+
+                //需要判断colume,有值的话需要比对列号
+                if (StrUtil.isBlank(column)) {
+                    LOG.info("无选座");
+                } else {
+                    if (!column.equals(col)) {
+                        LOG.info("座位{}列值不对，继续判断下一个座位，当前列值：{}，目标列值：{}", seatIndex, col, column);
+                        continue;
+                    }
+                }
                 Boolean isChoose = calSell(dailyTrainSeat, startIndex, endIndex);
-                if(isChoose){
+                if (isChoose) {
                     LOG.info("选中座位");
                 } else {
 //                    LOG.info("未选中座位");
-//                    continue;
+                    continue;
                 }
+                //根据offSetList选剩下的座位
+
+                boolean isGetAllOffSetSeat = true;
+                if (CollUtil.isNotEmpty(offSeatList)) {
+                    //有偏移值
+                    LOG.info("座位{}有偏移值，校验偏移座位是否可选", seatIndex);
+                    for (int j = 1; j < offSeatList.size(); j++) {
+                        Integer offset = offSeatList.get(j);
+                        //座位在库里的索引是从1开始
+//                        int nextIndex = seatIndex + offset - 1;
+                        int nextIndex = i + offset ;
+
+                        //有选座时，一定实在同一个车厢
+                        if (nextIndex >= seatList.size()) {
+                            LOG.info("座位{}不可选，偏移后的座位超出了这个车厢的座位数", nextIndex);
+                            isGetAllOffSetSeat = false;
+                            break;
+                        }
+
+                        DailyTrainSeat nextDailyTrainSeat = seatList.get(nextIndex);
+                        Boolean isChooseNext = calSell(nextDailyTrainSeat, startIndex, endIndex);
+                        if (isChooseNext) {
+                            LOG.info("座位{}被选中", nextDailyTrainSeat.getCarriageSeatIndex());
+                        } else {
+                            LOG.info("座位{}不可选", nextDailyTrainSeat.getCarriageSeatIndex());
+                            isGetAllOffSetSeat = false;
+                            break;
+                        }
+                    }
+                }
+                if (!isGetAllOffSetSeat) {
+                    continue;
+                }
+
+                //保存选好的座位
+                return;
             }
         }
     }
