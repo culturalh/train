@@ -19,6 +19,7 @@ public class GatewayApplication {
         SpringApplication app = new SpringApplication(GatewayApplication.class);
         Environment env = app.run(args).getEnvironment();
         LOG.info("启动成功！！");
+        //需要加上测试地址,比如http://127.0.0.1:8080/member/hello
         LOG.info("Gateway地址: \thttp://127.0.0.1:{}/",env.getProperty("server.port"));
     }
 }

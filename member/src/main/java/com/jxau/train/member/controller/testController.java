@@ -1,7 +1,9 @@
 package com.jxau.train.member.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.core.env.Environment;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -13,10 +15,12 @@ public class testController {
     @Value("${test.nacos}")
     private String testNacos;
 
+    @Autowired
+    Environment environment;
     @GetMapping("/hello")
     public String hello(){
 //        return "hello world";
-        return String.format("hello world, %s", testNacos);
+        return String.format("hello world, %s,端口: %s", testNacos, environment.getProperty("server.port"));
 
     }
 }
