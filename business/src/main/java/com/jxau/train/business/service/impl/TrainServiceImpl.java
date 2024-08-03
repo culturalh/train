@@ -22,6 +22,7 @@ import jakarta.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
@@ -96,11 +97,13 @@ public class TrainServiceImpl implements TrainService {
         trainMapper.deleteByPrimaryKey(id);
     }
 
-
+    @Transactional
     @Override
     public List<TrainQueryResp> queryAll() {
         //mybatis条件查询类
         List<Train> trainList = selectAll();
+//        LOG.info("再查一次");
+//        trainList = selectAll();
         List<TrainQueryResp> trainQueryResp = BeanUtil.copyToList(trainList, TrainQueryResp.class);
         return trainQueryResp;
     }
