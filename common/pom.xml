@@ -60,5 +60,10 @@
             <groupId>com.github.pagehelper</groupId>
             <artifactId>PageHelper-spring-boot-Starter</artifactId>
         </dependency>
+        <!--    springboot2.4版本之后,spring2020之后,需要添加这个依赖,才能读取bootstrap配置文件    -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-bootstrap</artifactId>
+        </dependency>
     </dependencies>
 </project>
