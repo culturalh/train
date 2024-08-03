@@ -169,9 +169,15 @@ public class ConfirmOrderServiceImpl implements ConfirmOrderService {
             }
             LOG.info("计算得到两排座位的相对第一个座位偏移值：{}", offSeatList);
             
-            getSeat(finalSeatList,date,trainCode,ticket0.getSeatTypeCode(),ticket0.getSeat(),offSeatList,dailyTrainTicket.getStartIndex(),dailyTrainTicket.getEndIndex());
-            
-            
+            getSeat(finalSeatList,
+                    date,
+                    trainCode,
+                    ticket0.getSeatTypeCode(),
+                    ticket0.getSeat().split("")[0],
+                    offSeatList,
+                    dailyTrainTicket.getStartIndex(),
+                    dailyTrainTicket.getEndIndex());
+
         }else {
             LOG.info("本次购票无选座");
             for (ConfirmOrderTicketReq confirmOrderTicketReq : tickets) {
