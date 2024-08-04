@@ -7,7 +7,7 @@ import com.jxau.train.member.resp.TicketQueryResp;
 
 public interface TicketService {
     //新增乘车人信息
-    void save(MemberTicketReq req);
+    void save(MemberTicketReq req) throws Exception;
 
     //根据会员id查询乘车人信息
     PageResp<TicketQueryResp> queryList(TicketQueryReq req);

@@ -22,6 +22,7 @@ import com.jxau.train.business.service.DailyTrainTicketService;
 import jakarta.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -60,10 +61,31 @@ public class DailyTrainTicketServiceImpl implements DailyTrainTicketService {
             dailyTrainTicketMapper.updateByPrimaryKey(dailyTrainTicket);
         }
     }
+    @Override
+    @Cacheable(value = "DailyTrainTicket.queryList3")
+    public PageResp<DailyTrainTicketQueryResp> queryList3(DailyTrainTicketQueryReq req){
+        LOG.info("测试缓存击穿");
+        return null;
+    }
+    @Override
+    @CachePut(value = "DailyTrainTicket.queryList")
+    public PageResp<DailyTrainTicketQueryResp> queryList2(DailyTrainTicketQueryReq req){
+        return queryList(req);
+    }
 
     @Override
     @Cacheable(value = "DailyTrainTicket.queryList")
     public PageResp<DailyTrainTicketQueryResp> queryList(DailyTrainTicketQueryReq req) {
+        /**
+         * 常见的过期策略
+         * TTL 超时时间
+         * LRU 最近最少使用
+         * LFU 最近最不经常使用
+         * FIFO 先进先出
+         * Random 随机淘汰策略
+         * 去缓存里取数据，因数据库本身没有数据而造成缓存穿透
+         */
+
 
         //mybatis条件查询类
         DailyTrainTicketExample dailyTrainTicketExample = new DailyTrainTicketExample();

@@ -193,7 +193,9 @@ public class ConfirmOrderServiceImpl implements ConfirmOrderService {
         try {
             afterConfirmOrderService.afterDoConfirm(dailyTrainTicket,finalSeatList, tickets, confirmOrder);
         } catch (Exception e) {
-            e.printStackTrace();
+            LOG.info("保存购票信息失败: {}",e);
+            throw new BusinessException(BusinessExceptionEnum.CONFIRM_ORDER_EXCEPTION);
+//            e.printStackTrace();
         }
 
 

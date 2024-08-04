@@ -13,6 +13,8 @@ import com.jxau.train.business.service.*;
 import com.jxau.train.common.context.LoginMemberContext;
 import com.jxau.train.common.req.MemberTicketReq;
 import com.jxau.train.common.resp.CommonResp;
+import io.seata.core.context.RootContext;
+import io.seata.spring.annotation.GlobalTransactional;
 import jakarta.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,12 +52,15 @@ public class AfterConfirmOrderServiceImpl implements AfterConfirmOrderService {
      * @param dailyTrainTicket
      * @param finalSeatList
      */
-    @Transactional
+//    @Transactional
+    @GlobalTransactional
     @Override
     public void afterDoConfirm(DailyTrainTicket dailyTrainTicket,
                                List<DailyTrainSeat> finalSeatList,
                                List<ConfirmOrderTicketReq> tickets,
-                               ConfirmOrder confirmOrder) {
+                               ConfirmOrder confirmOrder) throws Exception {
+        LOG.info("seata全局事务ID{}", RootContext.getXID());
+
         for (int j = 0, finalSeatListSize = finalSeatList.size(); j < finalSeatListSize; j++) {
             DailyTrainSeat dailyTrainSeat = finalSeatList.get(j);
             DailyTrainSeat seatForUpdate = new DailyTrainSeat();
@@ -121,6 +126,7 @@ public class AfterConfirmOrderServiceImpl implements AfterConfirmOrderService {
             memberTicketReq.setEndStation(dailyTrainTicket.getEnd());
             memberTicketReq.setEndTime(dailyTrainTicket.getEndTime());
             memberTicketReq.setSeatType(dailyTrainSeat.getSeatType());
+
             CommonResp<Object> commonResp = memberFeign.save(memberTicketReq);
             LOG.info("调用member接口，返回：{}", commonResp);
             // 更新订单状态为成功
@@ -133,9 +139,9 @@ public class AfterConfirmOrderServiceImpl implements AfterConfirmOrderService {
 
             // 模拟调用方出现异常
             // Thread.sleep(10000);
-            // if (1 == 1) {
-            //     throw new Exception("测试异常");
-            // }
+//             if (1 == 1) {
+//                 throw new Exception("测试异常");
+//             }
         }
 
     }

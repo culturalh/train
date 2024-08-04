@@ -34,6 +34,8 @@ public class DailyTrainAdminController {
         return new CommonResp<>(list);
     }
 
+
+
     @DeleteMapping("/delete/{id}")
     public CommonResp<Object> delete(@PathVariable Long id)
     {

@@ -18,6 +18,6 @@ public interface AfterConfirmOrderService {
     void afterDoConfirm(DailyTrainTicket dailyTrainTicket,
                         List<DailyTrainSeat> finalSeatList,
                         List<ConfirmOrderTicketReq> tickets,
-                        ConfirmOrder confirmOrder);
+                        ConfirmOrder confirmOrder) throws Exception;
 
 }

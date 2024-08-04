@@ -16,6 +16,10 @@ public interface DailyTrainTicketService {
     //根据会员id查询乘车人信息
     PageResp<DailyTrainTicketQueryResp> queryList(DailyTrainTicketQueryReq req);
 
+    PageResp<DailyTrainTicketQueryResp> queryList2(DailyTrainTicketQueryReq req);
+
+    PageResp<DailyTrainTicketQueryResp> queryList3(DailyTrainTicketQueryReq req);
+
     //根据会员id删除
     void delete(Long id);
 

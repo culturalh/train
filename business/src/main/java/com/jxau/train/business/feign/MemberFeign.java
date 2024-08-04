@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 public interface MemberFeign {
 
 
-
     @PostMapping("/member/feign/ticket/save")
     CommonResp<Object> save(@Valid @RequestBody MemberTicketReq req);
 }

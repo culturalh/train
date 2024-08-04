@@ -25,5 +25,4 @@ public class DailyTrainTicketWebController {
         return new CommonResp<>(list);
     }
 
-
 }

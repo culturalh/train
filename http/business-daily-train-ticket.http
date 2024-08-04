@@ -1,0 +1,11 @@
+GET http://localhost:8002/business/redis/get/123
+Accept: application/json
+
+###
+GET http://localhost:8000/business/admin/daily-train-ticket/query-list?page=1&size=5&trainCode=G1&start=北京&end=南昌
+Accept: application/json
+
+
+###
+GET http://localhost:8000/business/admin/daily-train-ticket/query-list3?page=1&size=5&trainCode=G1&start=北京&end=南昌
+Accept: application/json

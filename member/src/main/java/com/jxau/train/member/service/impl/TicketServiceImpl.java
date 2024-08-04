@@ -14,6 +14,7 @@ import com.jxau.train.member.mapper.TicketMapper;
 import com.jxau.train.member.req.TicketQueryReq;
 import com.jxau.train.member.resp.TicketQueryResp;
 import com.jxau.train.member.service.TicketService;
+import io.seata.core.context.RootContext;
 import jakarta.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,7 +32,8 @@ public class TicketServiceImpl implements TicketService {
     private TicketMapper ticketMapper;
 
     @Override
-    public void save(MemberTicketReq req) {
+    public void save(MemberTicketReq req) throws Exception {
+        LOG.info("seata全局事务ID{}", RootContext.getXID());
         Date now = new Date();
         Ticket ticket = BeanUtil.copyProperties(req, Ticket.class);
         //使用雪花算法生成ID
@@ -39,6 +41,10 @@ public class TicketServiceImpl implements TicketService {
         ticket.setCreateTime(now);
         ticket.setUpdateTime(now);
         ticketMapper.insert(ticket);
+        //模拟被调用方法出现异常
+        if(1 == 1){
+            throw new Exception("测试异常11");
+        }
     }
 
     @Override
