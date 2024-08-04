@@ -22,6 +22,7 @@ import com.jxau.train.business.service.DailyTrainTicketService;
 import jakarta.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -61,6 +62,7 @@ public class DailyTrainTicketServiceImpl implements DailyTrainTicketService {
     }
 
     @Override
+    @Cacheable(value = "DailyTrainTicket.queryList")
     public PageResp<DailyTrainTicketQueryResp> queryList(DailyTrainTicketQueryReq req) {
 
         //mybatis条件查询类

@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.env.Environment;
@@ -13,6 +14,7 @@ import org.springframework.core.env.Environment;
 @ComponentScan("com.jxau")
 @MapperScan("com.jxau.train.business.mapper")
 @EnableFeignClients("com.jxau.train.business.feign")
+@EnableCaching
 public class BusinessApplication {
     //创建日志对象
     private static final Logger LOG = LoggerFactory.getLogger(BusinessApplication.class);
