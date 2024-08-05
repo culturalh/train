@@ -101,7 +101,7 @@ public class ConfirmOrderServiceImpl implements ConfirmOrderService {
     }
 
     @Override
-    public void doConfirm(ConfirmOrderDoReq req) {
+    public synchronized void doConfirm(ConfirmOrderDoReq req) {
         //省略业务数据校验，如:车次是否存在，余票是否存在，车次是否在有效期内，ticket是否大于等于0，同车次同车票不能重复购买
 
         Date date = req.getDate();

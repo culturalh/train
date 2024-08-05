@@ -1,0 +1,49 @@
+GET http://localhost:8002/business/hello
+Accept: application/json
+
+###
+GET http://localhost:8000/business/hello
+Accept: application/json
+
+"date":"1723780800",
+
+###
+POST http://localhost:8000/business/confirm-order/do
+Content-Type: application/json
+token:eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJuYmYiOjE3MjI4NDU2NzAsIm1vYmlsZSI6IjEzMDAwMDAwMDAwIiwiaWQiOjE4MTU5MTY0Nzk2Njk5OTc1NjgsImV4cCI6MTcyMjkzMjA3MCwiaWF0IjoxNzIyODQ1NjcwfQ.V_9yMG0UVJ7wvnpMbubdwzl8dx0mezPsWk2--yzcTFs
+
+{
+  "dailyTrainTicketId":1819304403228823552,
+  "date":"2024-08-16",
+  "end":"南昌",
+  "start":"北京",
+  "tickets":[{
+    "passengerId": 1818984297151991808,
+    "seatTypeCode": "1",
+    "passengerName": "张三",
+    "passengerType": "1",
+    "passengerIdCard": "123213213213213123"
+   }],
+   "trainCode":"G1"
+}
+
+
+###
+POST http://localhost:8000/business/confirm-order/do
+Content-Type: application/json
+token:eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJuYmYiOjE3MjI4NDU2NzAsIm1vYmlsZSI6IjEzMDAwMDAwMDAwIiwiaWQiOjE4MTU5MTY0Nzk2Njk5OTc1NjgsImV4cCI6MTcyMjkzMjA3MCwiaWF0IjoxNzIyODQ1NjcwfQ.V_9yMG0UVJ7wvnpMbubdwzl8dx0mezPsWk2--yzcTFs
+
+{
+  "dailyTrainTicketId":1819304403228823552,
+  "date":"2024-08-17",
+  "end":"南昌",
+  "start":"北京",
+  "tickets":[{
+    "passengerId": 1818984297151991808,
+    "seatTypeCode": "1",
+    "passengerName": "张三",
+    "passengerType": "1",
+    "passengerIdCard": "123213213213213123"
+  }],
+  "trainCode":"G1"
+}
