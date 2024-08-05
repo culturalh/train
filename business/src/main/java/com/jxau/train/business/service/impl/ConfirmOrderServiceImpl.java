@@ -25,9 +25,12 @@ import com.jxau.train.business.req.ConfirmOrderQueryReq;
 import com.jxau.train.business.req.ConfirmOrderDoReq;
 import com.jxau.train.business.resp.ConfirmOrderQueryResp;
 import jakarta.annotation.Resource;
+import org.redisson.api.RedissonClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
+
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -57,7 +60,10 @@ public class ConfirmOrderServiceImpl implements ConfirmOrderService {
     private AfterConfirmOrderService afterConfirmOrderService;
 
     @Resource
-    private StringRedisTemplate redisTemplate;
+    private StringRedisTemplate stringRedisTemplate;
+
+    @Resource
+    private RedissonClient redissonClient;
 
     @Override
     public void save(ConfirmOrderDoReq req) {
@@ -110,15 +116,15 @@ public class ConfirmOrderServiceImpl implements ConfirmOrderService {
     public void doConfirm(ConfirmOrderDoReq req) {
 
 
-        String key = req.getDate() +"-"+ req.getTrainCode();//使用日期车次作为key
-
-        Boolean isTrue = redisTemplate.opsForValue().setIfAbsent(key, "value", 5, TimeUnit.SECONDS);
+        String lockKey = req.getDate() +"-"+ req.getTrainCode();//使用日期车次作为key
+        //对应的是redis中的setnx
+        Boolean isTrue = stringRedisTemplate.opsForValue().setIfAbsent(lockKey, "value", 5, TimeUnit.SECONDS);
         //省略业务数据校验，如:车次是否存在，余票是否存在，车次是否在有效期内，ticket是否大于等于0，同车次同车票不能重复购买
         if(isTrue){
-            LOG.info("获取锁成功");
+            LOG.info("获取锁成功，加锁{}", lockKey);
         }else {
             //只是没抢到锁，并不知道票抢完了没，所以提示请稍后重试
-            LOG.info("很遗憾,获取锁失败");
+            LOG.info("很遗憾,获取锁失败{}",lockKey);
             throw new BusinessException(BusinessExceptionEnum.CONFIRM_ORDER_LOCK_FAIL);
         }
         Date date = req.getDate();
@@ -214,7 +220,8 @@ public class ConfirmOrderServiceImpl implements ConfirmOrderService {
             throw new BusinessException(BusinessExceptionEnum.CONFIRM_ORDER_EXCEPTION);
 //            e.printStackTrace();
         }
-
+        LOG.info("保存购票信息成功,释放锁");
+        stringRedisTemplate.delete(lockKey);
 
     }
 

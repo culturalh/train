@@ -91,6 +91,12 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+            <!--            至少升级到3.18.0才支持springboot3       -->
+            <dependency>
+                <groupId>org.redisson</groupId>
+                <artifactId>redisson-spring-boot-starter</artifactId>
+                <version>3.21.0</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 </project>
