@@ -27,11 +27,14 @@ import com.jxau.train.business.resp.ConfirmOrderQueryResp;
 import jakarta.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class ConfirmOrderServiceImpl implements ConfirmOrderService {
@@ -53,9 +56,12 @@ public class ConfirmOrderServiceImpl implements ConfirmOrderService {
     @Resource
     private AfterConfirmOrderService afterConfirmOrderService;
 
+    @Resource
+    private StringRedisTemplate redisTemplate;
 
     @Override
     public void save(ConfirmOrderDoReq req) {
+
         Date now = new Date();
         ConfirmOrder confirmOrder = BeanUtil.copyProperties(req, ConfirmOrder.class);
         if (ObjectUtil.isNull(confirmOrder.getId())) {
@@ -101,9 +107,20 @@ public class ConfirmOrderServiceImpl implements ConfirmOrderService {
     }
 
     @Override
-    public synchronized void doConfirm(ConfirmOrderDoReq req) {
-        //省略业务数据校验，如:车次是否存在，余票是否存在，车次是否在有效期内，ticket是否大于等于0，同车次同车票不能重复购买
+    public void doConfirm(ConfirmOrderDoReq req) {
 
+
+        String key = req.getDate() +"-"+ req.getTrainCode();//使用日期车次作为key
+
+        Boolean isTrue = redisTemplate.opsForValue().setIfAbsent(key, "value", 5, TimeUnit.SECONDS);
+        //省略业务数据校验，如:车次是否存在，余票是否存在，车次是否在有效期内，ticket是否大于等于0，同车次同车票不能重复购买
+        if(isTrue){
+            LOG.info("获取锁成功");
+        }else {
+            //只是没抢到锁，并不知道票抢完了没，所以提示请稍后重试
+            LOG.info("很遗憾,获取锁失败");
+            throw new BusinessException(BusinessExceptionEnum.CONFIRM_ORDER_LOCK_FAIL);
+        }
         Date date = req.getDate();
         String trainCode = req.getTrainCode();
         String start = req.getStart();
