@@ -6,6 +6,8 @@ import cn.hutool.core.util.EnumUtil;
 import cn.hutool.core.util.NumberUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
+import com.alibaba.csp.sentinel.annotation.SentinelResource;
+import com.alibaba.csp.sentinel.slots.block.BlockException;
 import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -25,6 +27,7 @@ import com.jxau.train.business.req.ConfirmOrderQueryReq;
 import com.jxau.train.business.req.ConfirmOrderDoReq;
 import com.jxau.train.business.resp.ConfirmOrderQueryResp;
 import jakarta.annotation.Resource;
+import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,7 +70,6 @@ public class ConfirmOrderServiceImpl implements ConfirmOrderService {
 
     @Override
     public void save(ConfirmOrderDoReq req) {
-
         Date now = new Date();
         ConfirmOrder confirmOrder = BeanUtil.copyProperties(req, ConfirmOrder.class);
         if (ObjectUtil.isNull(confirmOrder.getId())) {
@@ -84,13 +86,10 @@ public class ConfirmOrderServiceImpl implements ConfirmOrderService {
 
     @Override
     public PageResp<ConfirmOrderQueryResp> queryList(ConfirmOrderQueryReq req) {
-
         //mybatis条件查询类
         ConfirmOrderExample confirmOrderExample = new ConfirmOrderExample();
         //创建条件
         ConfirmOrderExample.Criteria criteria = confirmOrderExample.createCriteria();
-
-
         //开始分页
         PageHelper.startPage(req.getPage(), req.getSize());
         List<ConfirmOrder> confirmOrderList = confirmOrderMapper.selectByExample(confirmOrderExample);
@@ -99,7 +98,6 @@ public class ConfirmOrderServiceImpl implements ConfirmOrderService {
         LOG.info("总行数：{}", pageInfo.getTotal());
         LOG.info("总页数：{}", pageInfo.getPages());
         List<ConfirmOrderQueryResp> confirmOrderQueryResp = BeanUtil.copyToList(confirmOrderList, ConfirmOrderQueryResp.class);
-
         //封装分页结果
         PageResp<ConfirmOrderQueryResp> pageResp = new PageResp<>();
         pageResp.setTotal(pageInfo.getTotal());
@@ -113,20 +111,36 @@ public class ConfirmOrderServiceImpl implements ConfirmOrderService {
     }
 
     @Override
+    @SentinelResource(value="doConfirm",blockHandler = "doConfirmBlockHandler")
     public void doConfirm(ConfirmOrderDoReq req) {
-
-
         String lockKey = req.getDate() +"-"+ req.getTrainCode();//使用日期车次作为key
         //对应的是redis中的setnx
-        Boolean isTrue = stringRedisTemplate.opsForValue().setIfAbsent(lockKey, "value", 5, TimeUnit.SECONDS);
-        //省略业务数据校验，如:车次是否存在，余票是否存在，车次是否在有效期内，ticket是否大于等于0，同车次同车票不能重复购买
-        if(isTrue){
-            LOG.info("获取锁成功，加锁{}", lockKey);
-        }else {
-            //只是没抢到锁，并不知道票抢完了没，所以提示请稍后重试
-            LOG.info("很遗憾,获取锁失败{}",lockKey);
-            throw new BusinessException(BusinessExceptionEnum.CONFIRM_ORDER_LOCK_FAIL);
-        }
+//        Boolean isTrue = stringRedisTemplate.opsForValue().setIfAbsent(lockKey, "value", 5, TimeUnit.SECONDS);
+//        //省略业务数据校验，如:车次是否存在，余票是否存在，车次是否在有效期内，ticket是否大于等于0，同车次同车票不能重复购买
+//        if(isTrue){
+//            LOG.info("获取锁成功，加锁{}", lockKey);
+//        }else {
+//            //只是没抢到锁，并不知道票抢完了没，所以提示请稍后重试
+//            LOG.info("很遗憾,获取锁失败{}",lockKey);
+//            throw new BusinessException(BusinessExceptionEnum.CONFIRM_ORDER_LOCK_FAIL);
+//        }
+        RLock rLock = null;
+        //使用redisson自带看门狗
+        try {
+            rLock = redissonClient.getLock(lockKey);
+        //                rLock.tryLock(0, 5, TimeUnit.SECONDS);//不带看门狗的
+            boolean tryLock = rLock.tryLock(0, TimeUnit.SECONDS);//带看门狗的，默认初始锁30秒钟
+            if (tryLock){
+                LOG.info("获取锁成功，加锁{}", lockKey);
+//                for (int i = 0; i < 30; i++) {
+//                    long expire = stringRedisTemplate.opsForValue().getOperations().getExpire(lockKey);
+//                    LOG.info("获取锁剩余时间{}",expire);
+//                    Thread.sleep(1000);
+//                }//观察看门狗的的自动刷新时间
+            }else{
+                LOG.info("很遗憾,获取锁失败{}",lockKey);
+                throw new BusinessException(BusinessExceptionEnum.CONFIRM_ORDER_LOCK_FAIL);
+            }
         Date date = req.getDate();
         String trainCode = req.getTrainCode();
         String start = req.getStart();
@@ -137,8 +151,6 @@ public class ConfirmOrderServiceImpl implements ConfirmOrderService {
         ConfirmOrder confirmOrder = new ConfirmOrder();
         confirmOrder.setId(SnowUtil.getSnowFlakeId());
         confirmOrder.setMemberId(LoginMemberContext.getId());
-
-
         confirmOrder.setDate(date);
         confirmOrder.setTrainCode(trainCode);
         confirmOrder.setStart(start);
@@ -147,14 +159,11 @@ public class ConfirmOrderServiceImpl implements ConfirmOrderService {
         confirmOrder.setStatus(ConfirmOrderStatusEnum.INIT.getCode());
         confirmOrder.setCreateTime(now);
         confirmOrder.setUpdateTime(now);
-
         confirmOrder.setTickets(JSON.toJSONString(tickets));
-
         confirmOrderMapper.insert(confirmOrder);
         //查出余票记录，需要得到真实的库存
         DailyTrainTicket dailyTrainTicket = dailyTrainTicketService.selectByUnique(date, trainCode, start, end);
         LOG.info("查出余票记录：{}", dailyTrainTicket);
-
         //预扣减余票数量，并判断余票是否充足
         reduceTickets(req, dailyTrainTicket);
         List<DailyTrainSeat> finalSeatList = new ArrayList<>();
@@ -178,7 +187,6 @@ public class ConfirmOrderServiceImpl implements ConfirmOrderService {
                 }
             }
             LOG.info("用于做参照的两排座位：{}", referSeatList);
-
             List<Integer> offSeatList = new ArrayList<>();
             List<Integer> absoluteSeatList = new ArrayList<>();
             for (ConfirmOrderTicketReq ticket:tickets) {
@@ -208,11 +216,7 @@ public class ConfirmOrderServiceImpl implements ConfirmOrderService {
 
             }
         }
-
-
         LOG.info("最终选择的座位：{}", finalSeatList);
-
-
         try {
             afterConfirmOrderService.afterDoConfirm(dailyTrainTicket,finalSeatList, tickets, confirmOrder);
         } catch (Exception e) {
@@ -220,9 +224,15 @@ public class ConfirmOrderServiceImpl implements ConfirmOrderService {
             throw new BusinessException(BusinessExceptionEnum.CONFIRM_ORDER_EXCEPTION);
 //            e.printStackTrace();
         }
-        LOG.info("保存购票信息成功,释放锁");
-        stringRedisTemplate.delete(lockKey);
-
+//        stringRedisTemplate.delete(lockKey);
+            } catch (InterruptedException e) {
+                LOG.error("购票异常",e);
+            }finally {
+                LOG.info("保存购票信息成功,释放锁");
+                if (rLock != null && rLock.isHeldByCurrentThread()){
+                    rLock.unlock();
+                }
+            }
     }
 
     /**
@@ -394,5 +404,15 @@ public class ConfirmOrderServiceImpl implements ConfirmOrderService {
 
             }
         }
+    }
+
+    /**
+     * 需包含原方法所有参数和BlockException参数
+     * @param req
+     * @param e
+     */
+    public void doConfirmBlockHandler(ConfirmOrderDoReq req, BlockException e){
+        LOG.info("购票请求被限流{}",req);
+        throw new BusinessException(BusinessExceptionEnum.CONFIRM_ORDER_FLOW_EXCEPTION);
     }
 }

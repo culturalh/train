@@ -14,7 +14,7 @@ import com.jxau.train.member.mapper.TicketMapper;
 import com.jxau.train.member.req.TicketQueryReq;
 import com.jxau.train.member.resp.TicketQueryResp;
 import com.jxau.train.member.service.TicketService;
-import io.seata.core.context.RootContext;
+
 import jakarta.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,7 +33,7 @@ public class TicketServiceImpl implements TicketService {
 
     @Override
     public void save(MemberTicketReq req) throws Exception {
-        LOG.info("seata全局事务ID{}", RootContext.getXID());
+//        LOG.info("seata全局事务ID{}", RootContext.getXID());
         Date now = new Date();
         Ticket ticket = BeanUtil.copyProperties(req, Ticket.class);
         //使用雪花算法生成ID

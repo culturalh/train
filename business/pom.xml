@@ -58,6 +58,11 @@
             <artifactId>redisson-spring-boot-starter</artifactId>
             <version>3.21.0</version>
         </dependency>
+        <!--      引入sentinel依赖    -->
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-sentinel</artifactId>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
