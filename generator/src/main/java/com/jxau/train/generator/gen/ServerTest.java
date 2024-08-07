@@ -21,9 +21,9 @@ public class ServerTest {
     static String serverPath = "[module]/src/main/java/com/jxau/train/[module]/";
     static String pomPath = "generator/pom.xml";
     static String module = "";
-    static {
-        new File(serverPath).mkdirs();
-    }
+//    static {
+//        new File(serverPath).mkdirs();
+//    }
     public static void main(String[] args) throws Exception {
         //读取到pom.xml文件中的文件名
         String generatorPath = getGeneratorPath();

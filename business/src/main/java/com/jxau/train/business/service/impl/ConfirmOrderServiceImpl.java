@@ -13,6 +13,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.jxau.train.business.domain.*;
 import com.jxau.train.business.enums.ConfirmOrderStatusEnum;
+import com.jxau.train.business.enums.RedisKeyPreEnum;
 import com.jxau.train.business.enums.SeatColEnum;
 import com.jxau.train.business.enums.SeatTypeEnum;
 import com.jxau.train.business.req.ConfirmOrderTicketReq;
@@ -27,8 +28,8 @@ import com.jxau.train.business.req.ConfirmOrderQueryReq;
 import com.jxau.train.business.req.ConfirmOrderDoReq;
 import com.jxau.train.business.resp.ConfirmOrderQueryResp;
 import jakarta.annotation.Resource;
-import org.redisson.api.RLock;
-import org.redisson.api.RedissonClient;
+//import org.redisson.api.RLock;
+//import org.redisson.api.RedissonClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,9 +66,11 @@ public class ConfirmOrderServiceImpl implements ConfirmOrderService {
     @Resource
     private StringRedisTemplate stringRedisTemplate;
 
-    @Resource
-    private RedissonClient redissonClient;
+//    @Resource
+//    private RedissonClient redissonClient;
 
+    @Resource
+    private SkTokenService skTokenService;
     @Override
     public void save(ConfirmOrderDoReq req) {
         Date now = new Date();
@@ -113,34 +116,44 @@ public class ConfirmOrderServiceImpl implements ConfirmOrderService {
     @Override
     @SentinelResource(value="doConfirm",blockHandler = "doConfirmBlockHandler")
     public void doConfirm(ConfirmOrderDoReq req) {
-        String lockKey = req.getDate() +"-"+ req.getTrainCode();//使用日期车次作为key
-        //对应的是redis中的setnx
-//        Boolean isTrue = stringRedisTemplate.opsForValue().setIfAbsent(lockKey, "value", 5, TimeUnit.SECONDS);
-//        //省略业务数据校验，如:车次是否存在，余票是否存在，车次是否在有效期内，ticket是否大于等于0，同车次同车票不能重复购买
-//        if(isTrue){
-//            LOG.info("获取锁成功，加锁{}", lockKey);
-//        }else {
-//            //只是没抢到锁，并不知道票抢完了没，所以提示请稍后重试
-//            LOG.info("很遗憾,获取锁失败{}",lockKey);
-//            throw new BusinessException(BusinessExceptionEnum.CONFIRM_ORDER_LOCK_FAIL);
-//        }
-        RLock rLock = null;
+
+        //校验令牌数量
+        boolean vaildSkToken = skTokenService.vaildSkToken(req.getDate(),req.getTrainCode(),LoginMemberContext.getId());
+        if (vaildSkToken){
+            LOG.info("令牌校验通过");
+        }else {
+            LOG.info("令牌校验不通过");
+            throw new BusinessException(BusinessExceptionEnum.CONFIRM_ORDER_SK_TOKEN_FAIL);
+        }
+
+        String lockKey = RedisKeyPreEnum.CONFIRM_ORDER + "-" +  req.getDate() +"-"+ req.getTrainCode();//使用日期车次作为key
+//        对应的是redis中的setnx
+        Boolean isTrue = stringRedisTemplate.opsForValue().setIfAbsent(lockKey, "value", 5, TimeUnit.SECONDS);
+        //省略业务数据校验，如:车次是否存在，余票是否存在，车次是否在有效期内，ticket是否大于等于0，同车次同车票不能重复购买
+        if(isTrue){
+            LOG.info("获取锁成功，加锁{}", lockKey);
+        }else {
+            //只是没抢到锁，并不知道票抢完了没，所以提示请稍后重试
+            LOG.info("很遗憾,获取锁失败{}",lockKey);
+            throw new BusinessException(BusinessExceptionEnum.CONFIRM_ORDER_LOCK_FAIL);
+        }
+//        RLock rLock = null;
         //使用redisson自带看门狗
         try {
-            rLock = redissonClient.getLock(lockKey);
-        //                rLock.tryLock(0, 5, TimeUnit.SECONDS);//不带看门狗的
-            boolean tryLock = rLock.tryLock(0, TimeUnit.SECONDS);//带看门狗的，默认初始锁30秒钟
-            if (tryLock){
-                LOG.info("获取锁成功，加锁{}", lockKey);
-//                for (int i = 0; i < 30; i++) {
-//                    long expire = stringRedisTemplate.opsForValue().getOperations().getExpire(lockKey);
-//                    LOG.info("获取锁剩余时间{}",expire);
-//                    Thread.sleep(1000);
-//                }//观察看门狗的的自动刷新时间
-            }else{
-                LOG.info("很遗憾,获取锁失败{}",lockKey);
-                throw new BusinessException(BusinessExceptionEnum.CONFIRM_ORDER_LOCK_FAIL);
-            }
+//            rLock = redissonClient.getLock(lockKey);
+//        //                rLock.tryLock(0, 5, TimeUnit.SECONDS);//不带看门狗的
+//            boolean tryLock = rLock.tryLock(0, TimeUnit.SECONDS);//带看门狗的，默认初始锁30秒钟
+//            if (tryLock){
+//                LOG.info("获取锁成功，加锁{}", lockKey);
+////                for (int i = 0; i < 30; i++) {
+////                    long expire = stringRedisTemplate.opsForValue().getOperations().getExpire(lockKey);
+////                    LOG.info("获取锁剩余时间{}",expire);
+////                    Thread.sleep(1000);
+////                }//观察看门狗的的自动刷新时间
+//            }else{
+//                LOG.info("很遗憾,获取锁失败{}",lockKey);
+//                throw new BusinessException(BusinessExceptionEnum.CONFIRM_ORDER_LOCK_FAIL);
+//            }
         Date date = req.getDate();
         String trainCode = req.getTrainCode();
         String start = req.getStart();
@@ -225,13 +238,14 @@ public class ConfirmOrderServiceImpl implements ConfirmOrderService {
 //            e.printStackTrace();
         }
 //        stringRedisTemplate.delete(lockKey);
-            } catch (InterruptedException e) {
+            } catch (Exception e) {
                 LOG.error("购票异常",e);
             }finally {
                 LOG.info("保存购票信息成功,释放锁");
-                if (rLock != null && rLock.isHeldByCurrentThread()){
-                    rLock.unlock();
-                }
+                stringRedisTemplate.delete(lockKey);
+//                if (rLock != null && rLock.isHeldByCurrentThread()){
+//                    rLock.unlock();
+//                }
             }
     }
 

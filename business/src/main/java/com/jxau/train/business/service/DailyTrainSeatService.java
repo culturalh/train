@@ -25,6 +25,9 @@ public interface DailyTrainSeatService {
     //查询某日某车次的某种座位的数量信息
     int countSeat(Date date,String trainCode,String seatType);
 
+    //查询某日某车次的座位数量信息
+    int countSeat(Date date,String trainCode);
+
     //查询某车次的某车厢的座位信息
     List<DailyTrainSeat> selectByCarriage(Date date, String trainCode, Integer carriageIndex);
 }

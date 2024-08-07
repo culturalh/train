@@ -123,9 +123,19 @@ public class DailyTrainSeatServiceImpl implements DailyTrainSeatService {
     }
 
     @Override
+    public int countSeat(Date date,String trainCode){
+
+        return countSeat(date,trainCode,null);
+    }
+
+    @Override
     public int countSeat(Date date,String trainCode,String seatType){
         DailyTrainSeatExample dailyTrainSeatExample = new DailyTrainSeatExample();
-        dailyTrainSeatExample.createCriteria().andDateEqualTo(date).andTrainCodeEqualTo(trainCode).andSeatTypeEqualTo(seatType);
+        DailyTrainSeatExample.Criteria criteria = dailyTrainSeatExample.createCriteria();
+        criteria.andDateEqualTo(date).andTrainCodeEqualTo(trainCode);
+        if(ObjectUtil.isNotEmpty(seatType)){
+            criteria.andSeatTypeEqualTo(seatType);
+        }
         long count= dailyTrainSeatMapper.countByExample(dailyTrainSeatExample);
         if (count==0){
             return -1;

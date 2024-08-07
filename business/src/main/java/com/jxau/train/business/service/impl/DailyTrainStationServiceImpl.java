@@ -116,4 +116,11 @@ public class DailyTrainStationServiceImpl implements DailyTrainStationService {
         }
         LOG.info("生成日期【{}】车次【{}】的车站站信息结束", DateUtil.formatDate(date), trainCode);
     }
+
+    public long countByTrainCode(Date date,String trainCode) {
+        DailyTrainStationExample dailyTrainStationExample = new DailyTrainStationExample();
+        dailyTrainStationExample.createCriteria().andTrainCodeEqualTo(trainCode).andDateEqualTo(date);
+        return dailyTrainStationMapper.countByExample(dailyTrainStationExample);
+    }
+
 }
