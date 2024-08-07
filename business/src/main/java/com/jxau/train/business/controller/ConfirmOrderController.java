@@ -1,5 +1,6 @@
 package com.jxau.train.business.controller;
 
+import cn.hutool.core.util.ObjectUtil;
 import com.alibaba.csp.sentinel.annotation.SentinelResource;
 import com.alibaba.csp.sentinel.slots.block.BlockException;
 import com.jxau.train.business.req.ConfirmOrderDoReq;
@@ -15,6 +16,7 @@ import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -27,10 +29,27 @@ public class ConfirmOrderController {
     @Resource
     private ConfirmOrderService confirmOrderService;
 
+    @Resource
+    private StringRedisTemplate stringRedisTemplate;
+
     @PostMapping("/do")
     @SentinelResource(value="/confirmOrderDo",blockHandler = "doConfirmBlockHandler")
     public CommonResp<Object> doConfirm(@Valid @RequestBody ConfirmOrderDoReq req)
     {
+
+        //图像校验验证码
+        String imageCode = req.getImageCode();
+        String imageCodeToken = req.getImageCodeToken();
+        String imageCodeRedis = stringRedisTemplate.opsForValue().get(imageCodeToken);
+        LOG.info("Redis中的imageCodeRedis:{}",imageCodeRedis,imageCode);
+        if(ObjectUtil.isEmpty(imageCodeRedis)){
+            return new CommonResp<>(false,"验证码过期",null);
+        }
+        if(!imageCodeRedis.equalsIgnoreCase(imageCode)){
+            return new CommonResp<>(false,"验证码不正确",null);
+        }else {
+            stringRedisTemplate.delete(imageCodeToken);
+        }
         confirmOrderService.doConfirm(req);
         return new CommonResp<>();
     }

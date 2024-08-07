@@ -58,7 +58,29 @@ public class ConfirmOrderDoReq {
 
 
 
+    @NotBlank(message = "【图片验证码】不能为空")
+    private String imageCode;
 
+
+    @NotBlank(message = "【图片验证码】参数非法")
+    private String imageCodeToken;
+
+
+    public String getImageCode() {
+        return imageCode;
+    }
+
+    public void setImageCode(String imageCode) {
+        this.imageCode = imageCode;
+    }
+
+    public String getImageCodeToken() {
+        return imageCodeToken;
+    }
+
+    public void setImageCodeToken(String imageCodeToken) {
+        this.imageCodeToken = imageCodeToken;
+    }
 
     public Long getMemberId() {
         return memberId;
@@ -126,6 +148,8 @@ public class ConfirmOrderDoReq {
                 ", end='" + end + '\'' +
                 ", dailyTrainTicketId=" + dailyTrainTicketId +
                 ", tickets=" + tickets +
+                ", imageCode='" + imageCode + '\'' +
+                ", imageCodeToken='" + imageCodeToken + '\'' +
                 '}';
     }
 }
